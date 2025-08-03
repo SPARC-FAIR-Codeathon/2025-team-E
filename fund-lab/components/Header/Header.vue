@@ -129,6 +129,11 @@ const links = [
     href: '/about'
   },
   {
+    title: 'fundlab',
+    displayTitle: 'FundLab',
+    href: '/fundlab'
+  },
+  {
     title: 'share-data',
     displayTitle: 'Submit to SPARC',
     href: '/share-data'
@@ -445,6 +450,7 @@ export default {
   outline: none;
   padding: 10px;
   transform: translate(12px, -8px);
+  appearance: none;
   -webkit-appearance: none;
 
   &:hover:not(:active) {
