@@ -138,6 +138,12 @@
         </template>
       </el-popover>
 
+      <el-popover class="tooltip" content="Toxin Database" placement="bottom-end" :show-after="helpDelay"
+        :teleported=false trigger="hover" popper-class="header-popper" >
+        <template #reference>
+          <map-svg-icon icon="filter" class="header-icon" @click="openToxinSidebar()"/>
+        </template>
+      </el-popover>
       <el-popover class="tooltip" content="Help" placement="bottom-end" :show-after="helpDelay"
         :teleported=false trigger="hover" popper-class="header-popper" >
         <template #reference>
@@ -557,6 +563,9 @@ export default {
     },
     close: function() {
       this.$emit("close");
+    },
+    openToxinSidebar: function() {
+      this.$emit("open-toxin-sidebar");
     },
     copyShareLink: function() {
       if (document) {

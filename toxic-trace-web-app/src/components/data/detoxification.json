@@ -1,8 +1,20 @@
 
 {
+  "category": "Detoxification",
+  "description": "A comprehensive guide to detoxifying common environmental toxins with evidence-based strategies.",
   "toxins": [
     {
       "name": "BPA",
+      "filters": {
+        "severity": "moderate",
+        "detoxDifficulty": "easy",
+        "eliminationSpeed": "fast",
+        "primarySource": ["food packaging", "plastic containers", "receipts"],
+        "affectedSystems": ["endocrine", "reproductive", "cardiovascular"],
+        "detoxMethods": ["dietary", "sauna", "exercise", "supplements"],
+        "timeToEliminate": "days",
+        "evidenceLevel": "strong"
+      },
       "detoxEvidence": {
         "description": "Urinary BPA levels decline sharply after switching to fresh foods for 3–6 weeks",
         "research": "Sessa et al. 2021",
@@ -32,6 +44,16 @@
     },
     {
       "name": "Phthalates",
+      "filters": {
+        "severity": "moderate",
+        "detoxDifficulty": "easy",
+        "eliminationSpeed": "fast",
+        "primarySource": ["personal care products", "vinyl flooring", "food packaging"],
+        "affectedSystems": ["endocrine", "reproductive", "respiratory"],
+        "detoxMethods": ["dietary", "sauna", "probiotics", "binders"],
+        "timeToEliminate": "days",
+        "evidenceLevel": "strong"
+      },
       "detoxEvidence": {
         "description": "Fast urinary decline of MEHP, MBP after exposure cut; NHANES shows endocrine effects",
         "research": "Meeker et al. 2014",
@@ -60,6 +82,16 @@
     },
     {
       "name": "PFAS",
+      "filters": {
+        "severity": "high",
+        "detoxDifficulty": "difficult",
+        "eliminationSpeed": "very slow",
+        "primarySource": ["non-stick cookware", "waterproof clothing", "firefighting foam"],
+        "affectedSystems": ["immune", "liver", "kidney", "endocrine"],
+        "detoxMethods": ["probiotics", "sauna", "specialized binders"],
+        "timeToEliminate": "years",
+        "evidenceLevel": "moderate"
+      },
       "detoxEvidence": {
         "description": "Very persistent; limited natural elimination. Cholestyramine shown to increase PFAS excretion in bile/feces",
         "research": "Genuis et al. 2010",
@@ -88,6 +120,16 @@
     },
     {
       "name": "Microplastics",
+      "filters": {
+        "severity": "moderate",
+        "detoxDifficulty": "moderate",
+        "eliminationSpeed": "slow",
+        "primarySource": ["bottled water", "seafood", "processed foods"],
+        "affectedSystems": ["digestive", "immune", "circulatory"],
+        "detoxMethods": ["dietary", "antioxidants", "gut health"],
+        "timeToEliminate": "weeks",
+        "evidenceLevel": "emerging"
+      },
       "detoxEvidence": {
         "description": "Fecal detection studies; blood filtering (Germany); gut inflammation research",
         "research": "Multiple studies"

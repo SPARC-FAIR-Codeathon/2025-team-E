@@ -4,14 +4,7 @@
     @mouseover="mouseHovered = true"
     @mouseleave="mouseHovered = false"
   >
-    <ContentBar
-      class="toolbar"
-      :entry="entry"
-      ref="contentBar"
-      @chooser-changed="onResize"
-      @scaffold-view-clicked="scaffoldViewClicked"
-      @vue:mounted="setPanesBoundary"
-    />
+
   <!--
     <DatasetHeader
       v-if="entry.datasetTitle"
