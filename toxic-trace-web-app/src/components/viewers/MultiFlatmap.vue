@@ -209,6 +209,18 @@
       @close="showLiverInfo = false"
     />
 
+    <!-- Lung Information Popup -->
+    <LungInfoPopup 
+      :show-dialog="showLungInfo"
+      @close="showLungInfo = false"
+    />
+
+    <!-- Brain Information Popup -->
+    <BrainInfoPopup 
+      :show-dialog="showBrainInfo"
+      @close="showBrainInfo = false"
+    />
+
     <!-- Full-screen PDB Viewer Overlay -->
     <div v-if="showPdbViewer" class="pdb-viewer-overlay" @click="closePdbViewer">
       <div class="pdb-viewer-content" @click.stop>
@@ -262,6 +274,8 @@ import HealthQuiz from "../HealthQuiz.vue";
 import ToxinSidebar from "../ToxinSidebar.vue";
 import MyDetoxPlan from "../MyDetoxPlan.vue";
 import LiverInfoPopup from "../organ-pages/LiverInfoPopup.vue";
+import LungInfoPopup from "../organ-pages/LungInfoPopup.vue";
+import BrainInfoPopup from "../organ-pages/BrainInfoPopup.vue";
 
 import { MultiFlatmapVuer } from "@abi-software/flatmapvuer";
 import "@abi-software/flatmapvuer/dist/style.css";
@@ -296,6 +310,8 @@ export default {
     ToxinSidebar,
     MyDetoxPlan,
     LiverInfoPopup,
+    LungInfoPopup,
+    BrainInfoPopup,
   },
   data: function () {
     return {
@@ -312,6 +328,8 @@ export default {
       showDetoxPlan: false,
       showPdbViewer: false,
       showLiverInfo: false,
+      showLungInfo: false,
+      showBrainInfo: false,
       fundingPopupVisible: false,
       // Health percentages for each organ (constants for now)
       organHealthData: {
@@ -830,6 +848,14 @@ export default {
       // Show liver information popup when liver is clicked
       if (organId === 'liver') {
         this.showLiverInfo = true;
+      }
+      // Show lung information popup when lungs are clicked
+      else if (organId === 'lungs') {
+        this.showLungInfo = true;
+      }
+      // Show brain information popup when brain is clicked
+      else if (organId === 'brain') {
+        this.showBrainInfo = true;
       }
     },
   },

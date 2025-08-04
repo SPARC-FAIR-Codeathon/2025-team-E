@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    BrainInfoPopup: typeof import('./components/organ-pages/BrainInfoPopup.vue')['default']
     ContentBar: typeof import('./components/ContentBar.vue')['default']
     ContentVuer: typeof import('./components/ContentVuer.vue')['default']
     ContextCard: typeof import('./components/ContextCard.vue')['default']
@@ -50,6 +51,7 @@ declare module 'vue' {
     HealthQuiz: typeof import('./components/HealthQuiz.vue')['default']
     Iframe: typeof import('./components/viewers/Iframe.vue')['default']
     LiverInfoPopup: typeof import('./components/organ-pages/LiverInfoPopup.vue')['default']
+    LungInfoPopup: typeof import('./components/organ-pages/LungInfoPopup.vue')['default']
     MapContent: typeof import('./components/MapContent.vue')['default']
     MultiFlatmap: typeof import('./components/viewers/MultiFlatmap.vue')['default']
     MyDetoxPlan: typeof import('./components/MyDetoxPlan.vue')['default']

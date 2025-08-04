@@ -40,24 +40,15 @@
         <li>UGT activity is only ~10% of adult levels in newborns</li>
       </ul>
 
-      <h4>🦠 Gut–Liver Axis Disruption</h4>
-      <ul>
-        <li><strong>Leaky gut</strong> and <strong>microbiome imbalances</strong> can increase the flow of toxic byproducts into the liver</li>
-      </ul>
-
-      <h4>🥴 Poor Nutrition & Lifestyle</h4>
-      <ul>
-        <li>Deficiencies in detox cofactors (e.g., B vitamins, magnesium, glutathione)</li>
-        <li>Fatty liver disease, high sugar intake, and sedentary behavior reduce liver resilience</li>
-      </ul>
-
-      <p>
-        🧪 <a href="https://pubmed.ncbi.nlm.nih.gov/20020268/" target="_blank" rel="noopener noreferrer">
-          Review: Environmental Chemicals and Liver Health (Cave et al., 2010)
-        </a>
-      </p>
-
       <h3>♻️ How the Liver Processes BPA</h3>
+
+      <div class="image-container">
+        <img 
+          src="/organ-system-images/Liver - BPA Detox.png" 
+          alt="Liver BPA Detox Process" 
+          class="section-image"
+        />
+      </div>
 
       <h4>1. Absorption & Entry</h4>
       <ul>
@@ -66,6 +57,15 @@
       </ul>
 
       <h4>2. Detoxification (Phase II)</h4>
+      
+      <div class="image-container">
+        <img 
+          src="/organ-system-images/Liver - BPA Metabolism.png" 
+          alt="Liver BPA Metabolism Pathways" 
+          class="section-image"
+        />
+      </div>
+
       <ul>
         <li>BPA is primarily processed through <strong>glucuronidation</strong> and <strong>sulfation</strong>:
           <ul>
@@ -80,12 +80,6 @@
           </ul>
         </li>
       </ul>
-
-      <p>
-        🧪 <a href="https://pubmed.ncbi.nlm.nih.gov/15800095/" target="_blank" rel="noopener noreferrer">
-          Study: BPA Metabolism via Glucuronidation in Humans (Teeguarden et al., 2005)
-        </a>
-      </p>
 
       <h3>⚠️ What Happens to BPA That Isn't Filtered?</h3>
       
@@ -102,13 +96,15 @@
         <li>Infants, young children, and people with <strong>low UGT activity</strong> have slower BPA clearance</li>
       </ul>
 
-      <p>
-        🧪 <a href="https://pubmed.ncbi.nlm.nih.gov/19244986/" target="_blank" rel="noopener noreferrer">
-          Study: Reduced BPA Clearance in Neonates (Edginton & Ritter, 2009)
-        </a>
-      </p>
-
       <h3>🔗 BPA and Estrogen Receptor Binding</h3>
+      
+      <div class="image-container">
+        <img 
+          src="/organ-system-images/Liver-BPA-Estrogen.png" 
+          alt="BPA and Estrogen Receptor Interactions" 
+          class="section-image"
+        />
+      </div>
       
       <p>BPA is a <strong>xenoestrogen</strong> — it mimics natural estrogen by binding to:</p>
       <ul>
@@ -131,15 +127,6 @@
         <li>Unlike natural estrogen, BPA is <strong>not properly regulated by feedback loops</strong>, leading to persistent overstimulation</li>
       </ul>
 
-      <p>
-        🧪 <a href="https://pubmed.ncbi.nlm.nih.gov/25460323/" target="_blank" rel="noopener noreferrer">
-          Study: BPA Activates Estrogen Receptors (Acconcia et al., 2015)
-        </a> 
-        🧪 <a href="https://pubmed.ncbi.nlm.nih.gov/17890788/" target="_blank" rel="noopener noreferrer">
-          Study: GPER Activation by BPA in Liver (Wetherill et al., 2007)
-        </a>
-      </p>
-
       <h3>🧠 Pro Tip (Researcher View)</h3>
       <ul>
         <li><strong>UGT2B15 and UGT2B7</strong> are the main enzymes for BPA glucuronidation</li>
@@ -160,6 +147,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'LiverInfoPopup',
   props: {
@@ -204,13 +192,13 @@ export default {
 .liver-content h2,
 .liver-content h3,
 .liver-content h4 {
-  color: #7c3aed;
+  color: #2c5aa0;
   margin-top: 24px;
   margin-bottom: 16px;
 }
 
 .liver-content h2 {
-  border-bottom: 2px solid #7c3aed;
+  border-bottom: 2px solid #2c5aa0;
   padding-bottom: 8px;
 }
 
@@ -229,7 +217,7 @@ export default {
 }
 
 .liver-content strong {
-  color: #7c3aed;
+  color: #2c5aa0;
   font-weight: 600;
 }
 
@@ -242,22 +230,28 @@ export default {
   margin: 12px 0;
 }
 
-.liver-content a {
-  color: #7c3aed;
-  text-decoration: none;
-  font-weight: 500;
-  border-bottom: 1px solid transparent;
-  transition: all 0.3s ease;
+.image-container {
+  text-align: center;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  min-height: 100px;
 }
 
-.liver-content a:hover {
-  color: #5b21b6;
-  border-bottom-color: #7c3aed;
-  text-decoration: none;
+.section-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  display: block;
+  margin: 0 auto;
 }
 
-.liver-content a:visited {
-  color: #8b5cf6;
+.section-image:hover {
+  transform: scale(1.02);
 }
 
 /* Scrollbar styling */
