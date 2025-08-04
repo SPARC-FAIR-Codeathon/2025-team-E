@@ -18,39 +18,6 @@
       <div
         style="width: 100%; height: 100%; position: relative; overflow: hidden"
       >
-        <SideBar
-          ref="sideBar"
-          :envVars="envVars"
-          :visible="sideBarVisibility"
-          :class="['side-bar', { 'start-up': startUp }]"
-          :open-at-start="startUp"
-          :annotationEntry="annotationEntry"
-          :createData="createData"
-          :connectivityEntry="connectivityEntry"
-          :connectivityKnowledge="connectivityKnowledge"
-          :filterOptions="filterOptions"
-          :showVisibilityFilter="showVisibilityFilter"
-          @tabClicked="onSidebarTabClicked"
-          @tabClosed="onSidebarTabClosed"
-          @actionClick="actionClick"
-          @search-changed="searchChanged($event)"
-          @anatomy-in-datasets="updateMarkers($event)"
-          @annotation-submitted="onAnnotationSubmitted"
-          @confirm-create="onConfirmCreate"
-          @cancel-create="onCancelCreate"
-          @confirm-delete="onConfirmDelete"
-          @number-of-datasets-for-anatomies="updateScaffoldMarkers($event)"
-          @hover-changed="hoverChanged($event)"
-          @contextUpdate="contextUpdate($event)"
-          @datalink-clicked="datalinkClicked($event)"
-          @show-connectivity="onShowConnectivity"
-          @show-reference-connectivities="onShowReferenceConnectivities"
-          @connectivity-hovered="onConnectivityHovered"
-          @connectivity-collapse-change="onConnectivityCollapseChange"
-          @connectivity-source-change="onConnectivitySourceChange"
-          @filter-visibility="onFilterVisibility"
-          @connectivity-item-close="onConnectivityItemClose"
-        />
         <SplitDialog
           :entries="entries"
           ref="splitdialog"
@@ -70,8 +37,6 @@ import DialogToolbarContent from "./DialogToolbarContent.vue";
 import EventBus from "./EventBus";
 import SplitDialog from "./SplitDialog.vue";
 // import contextCards from './context-cards'
-import { SideBar } from "@abi-software/map-side-bar";
-import "@abi-software/map-side-bar/dist/style.css";
 import {
   capitalise,
   getNewMapEntry,
@@ -101,7 +66,6 @@ export default {
     Main,
     DialogToolbarContent,
     SplitDialog,
-    SideBar,
   },
   setup() {
     const mainStore = useMainStore();
@@ -119,28 +83,10 @@ export default {
   },
   data: function () {
     return {
-      sideBarVisibility: true,
-      startUp: true,
+      selectedToxins: [],
       search: '',
       expanded: '',
       filterTriggered: false,
-      availableFacets: [],
-      connectivityEntry: [],
-      annotationEntry: [],
-      annotationCallback: undefined,
-      confirmCreateCallback: undefined,
-      cancelCreateCallback: undefined,
-      confirmDeleteCallback: undefined,
-      confirmCommentCallback: undefined,
-      createData: {},
-      connectivityProcessed: false,
-      connectivityHighlight: [],
-      connectivityKnowledge: [],
-      connectivityExplorerClicked: [], // to support multi views
-      showVisibilityFilter: false,
-      filterVisibility: true,
-      filterOptions: [],
-      annotationHighlight: [],
     }
   },
   watch: {

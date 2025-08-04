@@ -196,6 +196,13 @@
       </template>
     </el-dialog>
 
+    <!-- Toxin Sidebar (always rendered so tab is always visible) -->
+    <ToxinSidebar
+      @close="closeToxinSidebar"
+      @toxin-selected="onToxinSelected"
+      @view-details="onViewToxinDetails"
+    />
+
     <HelpModeDialog
       v-if="helpMode && useHelpModeDialog"
       ref="multiflatmapHelp"
@@ -225,6 +232,7 @@ import DyncamicMarkerMixin from "../../mixins/DynamicMarkerMixin";
 
 import YellowStar from "../../icons/yellowstar";
 import HealthQuiz from "../HealthQuiz.vue";
+import ToxinSidebar from "../ToxinSidebar.vue";
 import MyDetoxPlan from "../MyDetoxPlan.vue";
 
 import { MultiFlatmapVuer } from "@abi-software/flatmapvuer";
@@ -257,6 +265,7 @@ export default {
     MultiFlatmapVuer,
     HelpModeDialog,
     HealthQuiz,
+    ToxinSidebar,
     MyDetoxPlan,
   },
   data: function () {
@@ -270,6 +279,7 @@ export default {
       selectedMap: 'full-body', // Default to full-body on page load
       imageError: false,
       showQuiz: false,
+      showToxinSidebar: false,
       showDetoxPlan: false,
       fundingPopupVisible: false,
       // Health percentages for each organ (constants for now)
@@ -601,10 +611,10 @@ export default {
     toggleQuiz: function() {
       this.showQuiz = !this.showQuiz;
       
-      // Close funding popup and detox plan if quiz is being opened
+      // Close funding popup and toxin sidebar if quiz is being opened
       if (this.showQuiz) {
         this.fundingPopupVisible = false;
-        this.showDetoxPlan = false;
+        this.showToxinSidebar = false;
       }
       
       // Track quiz dialog opening/closing
@@ -617,6 +627,25 @@ export default {
         });
       }
     },
+    toggleToxinSidebar: function() {
+      this.showToxinSidebar = !this.showToxinSidebar;
+      
+      // Close quiz and funding popup if toxin sidebar is being opened
+      if (this.showToxinSidebar) {
+        this.showQuiz = false;
+        this.fundingPopupVisible = false;
+      }
+      
+      // Track toxin sidebar opening/closing
+      if (Tagging && Tagging.sendEvent) {
+        Tagging.sendEvent({
+          'event': 'interaction_event',
+          'event_name': this.showToxinSidebar ? 'portal_toxin_sidebar_opened' : 'portal_toxin_sidebar_closed',
+          'category': 'toxin_database',
+          'location': 'toxin_sidebar_toggle_button'
+        });
+      }
+    },
     toggleDetoxPlan: function() {
       this.showDetoxPlan = !this.showDetoxPlan;
       
@@ -624,24 +653,73 @@ export default {
       if (this.showDetoxPlan) {
         this.showQuiz = false;
         this.fundingPopupVisible = false;
+        this.showToxinSidebar = false; // Close sidebar if open
       }
       
-      // Track detox plan dialog opening/closing
+      // Track detox plan opening/closing
       if (Tagging && Tagging.sendEvent) {
         Tagging.sendEvent({
           'event': 'interaction_event',
           'event_name': this.showDetoxPlan ? 'portal_detox_plan_opened' : 'portal_detox_plan_closed',
-          'category': 'detox_plan_dialog',
+          'category': 'toxin_database',
           'location': 'detox_plan_toggle_button'
+        });
+      }
+    },
+    closeToxinSidebar: function() {
+      this.showToxinSidebar = false;
+    },
+    onToxinSelected: function(selectedToxins) {
+      // Handle toxin selection from sidebar
+      console.log('Toxins selected:', selectedToxins);
+      
+      // Track toxin selection
+      if (Tagging && Tagging.sendEvent) {
+        Tagging.sendEvent({
+          'event': 'interaction_event',
+          'event_name': 'portal_toxins_selected',
+          'category': 'toxin_database',
+          'location': 'toxin_sidebar',
+          'selected_toxins': selectedToxins.join(', ')
+        });
+      }
+    },
+    onToxinsSelected: function(selectedToxins) {
+      // Handle toxin selection from MyDetoxPlan component
+      console.log('Toxins selected from detox plan:', selectedToxins);
+      
+      // Track toxin selection from detox plan
+      if (Tagging && Tagging.sendEvent) {
+        Tagging.sendEvent({
+          'event': 'interaction_event',
+          'event_name': 'portal_toxins_selected_detox_plan',
+          'category': 'toxin_database', 
+          'location': 'detox_plan_dialog',
+          'selected_toxins': selectedToxins.join(', ')
+        });
+      }
+    },
+    onViewToxinDetails: function(toxin) {
+      // Handle viewing toxin details (could open MyDetoxPlan component)
+      console.log('View toxin details:', toxin);
+      
+      // Track toxin details view
+      if (Tagging && Tagging.sendEvent) {
+        Tagging.sendEvent({
+          'event': 'interaction_event',
+          'event_name': 'portal_toxin_details_viewed',
+          'category': 'toxin_database',
+          'location': 'toxin_sidebar',
+          'toxin_name': toxin.name
         });
       }
     },
     toggleFundingPopup: function() {
       this.fundingPopupVisible = !this.fundingPopupVisible;
-      // Close quiz and detox plan when opening funding popup for better UX
+      // Close quiz and toxin sidebar when opening funding popup for better UX
       if (this.fundingPopupVisible) {
         this.showQuiz = false;
-        this.showDetoxPlan = false;
+        this.showToxinSidebar = false;
       }
     },
     onHealthDataUpdated: function(healthData) {
