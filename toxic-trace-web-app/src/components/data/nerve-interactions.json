@@ -1,0 +1,415 @@
+{
+  "category": "Nervous System Toxin Interactions",
+  "description": "Comprehensive analysis of how environmental toxins disrupt specific nerve pathways and autonomic functions through receptor-mediated mechanisms.",
+  "datasets": [
+    {
+      "id": "er-bpa-vagus",
+      "system": "Nervous",
+      "targetProtein": "Estrogen Receptor",
+      "toxin": "BPA",
+      "nerve": "Vagus nerve (CN X)",
+      "keyFunctions": "Parasympathetic control of heart, gut & anti-inflammatory reflex",
+      "interaction": {
+        "description": "BPA disrupts ER-dependent transcription and triggers rapid Ca²⁺/PKA signaling in vagal neurons.",
+        "mechanism": "ER activation in preganglionic neurons affects acetylcholine output and cholinergic anti-inflammatory reflex"
+      },
+      "pathways": [
+        "Alters acetylcholine output → shift in heart-rate-variability",
+        "Dampens cholinergic anti-inflammatory reflex, raising baseline cytokines",
+        "Perturbs insulin-vagal feedback loops on gut–pancreas axis"
+      ],
+      "consequences": [
+        "Blunted vagal tone → tachycardia, impaired gastric motility",
+        "Higher systemic inflammation",
+        "Greater metabolic syndrome risk through disrupted gut–brain–pancreas signaling"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "clinicalCorrelation": "Reduced HF-HRV seen in human cohorts with higher urinary BPA"
+      }
+    },
+    {
+      "id": "er-bpa-pelvic-splanchnic",
+      "system": "Nervous",
+      "targetProtein": "Estrogen Receptor",
+      "toxin": "BPA",
+      "nerve": "Pelvic splanchnic nerves (S2–S4)",
+      "keyFunctions": "Parasympathetic supply to bladder, distal colon, uterus",
+      "interaction": {
+        "description": "BPA stabilizes agonist-like ER conformation, affecting gene regulation in sacral preganglionic neurons.",
+        "mechanism": "Up/down-regulation of choline-acetyltransferase, nNOS and muscarinic receptors"
+      },
+      "pathways": [
+        "Alters detrusor muscle excitability and urothelial ATP release",
+        "Modifies uterine/colonic smooth-muscle contractility",
+        "Changes parasympathetic output and local ER signaling"
+      ],
+      "consequences": [
+        "Over- or under-active bladder, dysuria",
+        "Dysmenorrhea, uterine hyper-/hypocontractility",
+        "Possible fertility effects",
+        "Pelvic visceral pain syndromes"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "mechanisticBasis": "ERα/β found in sacral neurons and cholinergic terminals"
+      }
+    },
+    {
+      "id": "er-bpa-hypothalamic",
+      "system": "Nervous",
+      "targetProtein": "Estrogen Receptor",
+      "toxin": "BPA",
+      "nerve": "Hypothalamic ER-sensitive projections",
+      "keyFunctions": "Pre-optic, arcuate, PVN → thermoregulation & stress response",
+      "interaction": {
+        "description": "BPA alters developmental and adult gene expression, reshaping co-activator recruitment in neuropeptide neurons.",
+        "mechanism": "Mis-expression of neuropeptides that control temperature and HPA-axis tone"
+      },
+      "pathways": [
+        "Pre-optic neurons mis-regulate prostaglandin E₂ & brown-fat sympathetic drive",
+        "PVN CRH neurons alter glucocorticoid feedback loops",
+        "Arcuate POMC/NPY imbalance perturbs energy-homeostasis signals"
+      ],
+      "consequences": [
+        "Heat-intolerance, night-sweats or cold sensitivity",
+        "Flattened or exaggerated cortisol rhythms → anxiety, sleep fragmentation",
+        "Appetite/weight dysregulation and downstream autonomic imbalance"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "targetNeurons": "Kiss1, POMC, CRH and TRH neurons rich in ERα/β"
+      }
+    },
+    {
+      "id": "ttr-pfas-sympathetic-chain",
+      "system": "Nervous",
+      "targetProtein": "Transthyretin (TTR)",
+      "toxin": "PFAS",
+      "nerve": "Sympathetic chain (T1–L2)",
+      "keyFunctions": "Preganglionic neurons drive heart-rate, brown-fat thermogenesis, vascular tone",
+      "interaction": {
+        "description": "PFAS interfere with T4 transport, creating systemic hypothyroid signaling that affects sympathetic function.",
+        "mechanism": "Reduced T4 → less local T3 → decreased β-adrenergic receptors and catecholamine enzymes"
+      },
+      "pathways": [
+        "Blunted sympathetic firing",
+        "Bradycardia and impaired cold-induced thermogenesis",
+        "Central TRH over-drive causing episodic hyper-sympathetic surges"
+      ],
+      "consequences": [
+        "Orthostatic intolerance",
+        "Autonomic lability",
+        "Impaired thermogenesis"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "bioassayData": "Population PFOS 8–16 ng/mL associates with lower total-T4/T3",
+        "clinicalRelevance": "Thyroid disruption flagged as upstream cause of dysautonomia"
+      }
+    },
+    {
+      "id": "ttr-pfas-phrenic",
+      "system": "Nervous",
+      "targetProtein": "Transthyretin (TTR)",
+      "toxin": "PFAS",
+      "nerve": "Phrenic nerve (C3-C5)",
+      "keyFunctions": "Motor outflow to diaphragm",
+      "interaction": {
+        "description": "PFAS-induced T4 reduction affects diaphragm myoneural development and excitability.",
+        "mechanism": "T4 regulates diaphragm myosin isoforms, mitochondrial density and phrenic motoneuron Na⁺/K⁺-ATPase"
+      },
+      "pathways": [
+        "Hypothyroid states weaken diaphragmatic contractility",
+        "Slow phrenic conduction",
+        "Maternal PFAS reduces fetal T4 affecting development"
+      ],
+      "consequences": [
+        "Hypoventilation predisposition",
+        "Sleep-disordered breathing",
+        "Life-long phrenic under-performance from prenatal exposure"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "developmentalImpact": "Pregnancy PFAS exposure linked to T4-mediated neurodevelopmental problems"
+      }
+    },
+    {
+      "id": "ttr-pfas-peripheral-sensory",
+      "system": "Nervous",
+      "targetProtein": "Transthyretin (TTR)",
+      "toxin": "PFAS",
+      "nerve": "Peripheral sensory nerves",
+      "keyFunctions": "Myelinated Aβ, Aδ and C fibers for sensation",
+      "interaction": {
+        "description": "T4 scarcity from PFAS exposure delays myelination and reduces fiber diameter.",
+        "mechanism": "Schwann-cell proliferation and myelin-protein transcription require thyroid hormone"
+      },
+      "pathways": [
+        "Delayed myelination and reduced fiber diameter",
+        "Lower saltatory-conduction speed",
+        "Length-dependent sensory loss pattern"
+      ],
+      "consequences": [
+        "Glove-and-stocking sensory loss",
+        "Paraesthesias and reduced ankle reflexes",
+        "Demyelinating peripheral neuropathy"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "doseResponse": "PFAS mixtures at sub-μg/L levels could precipitate neuropathy",
+        "populationData": "PFOS 8–16 ng/mL correlates with disrupted thyroid indices"
+      }
+    },
+    {
+      "id": "ar-phthalates-pudendal",
+      "system": "Nervous",
+      "targetProtein": "Androgen Receptor (AR)",
+      "toxin": "Phthalates",
+      "nerve": "Pudendal nerve",
+      "keyFunctions": "Somatic motor & sensory supply to external urethral/anal sphincters and genitalia",
+      "interaction": {
+        "description": "Phthalate metabolites (MEHP) dock in AR ligand-binding pocket, blocking normal androgen signaling.",
+        "mechanism": "Competitive antagonism with binding energies comparable to testosterone"
+      },
+      "pathways": [
+        "Loss of androgen trophic support to perineal muscles",
+        "Impaired bulbocavernosus reflex",
+        "Disrupted nitric-oxide signaling"
+      ],
+      "consequences": [
+        "Weaker sphincter tone → stress or urge incontinence",
+        "Erectile dysfunction",
+        "Reduced sexual sensation"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "bindingData": "MEHP binding energies comparable to testosterone"
+      }
+    },
+    {
+      "id": "ar-phthalates-sciatic-femoral",
+      "system": "Nervous",
+      "targetProtein": "Androgen Receptor (AR)",
+      "toxin": "Phthalates",
+      "nerve": "Sciatic & femoral nerves",
+      "keyFunctions": "Largest peripheral motor/sensory trunks to lower limb",
+      "interaction": {
+        "description": "AR blockade disrupts transcription of growth-associated genes, blunting androgen-dependent nerve maturation.",
+        "mechanism": "Reduced expression of β-actin, myelin proteins affecting axonal growth and myelination"
+      },
+      "pathways": [
+        "Impaired androgen-modulated axonal growth",
+        "Disrupted Schwann-cell myelination",
+        "Blunted nerve maturation"
+      ],
+      "consequences": [
+        "Slower axon regeneration after injury",
+        "Prolonged weakness",
+        "Subtle motor fatigue or gait instability"
+      ],
+      "evidence": {
+        "level": "Moderate",
+        "mechanisticBasis": "AR required for growth-associated gene transcription"
+      }
+    },
+    {
+      "id": "ar-phthalates-hypogastric",
+      "system": "Nervous",
+      "targetProtein": "Androgen Receptor (AR)",
+      "toxin": "Phthalates",
+      "nerve": "Hypogastric nerve",
+      "keyFunctions": "Sympathetic outflow to bladder neck, prostate, uterus",
+      "interaction": {
+        "description": "AR antagonism in thoracolumbar preganglionic neurons reduces noradrenergic enzyme expression.",
+        "mechanism": "Dampened sympathetic drive to pelvic organs through reduced catecholamine synthesis"
+      },
+      "pathways": [
+        "Reduced noradrenergic enzyme expression",
+        "Dampened sympathetic drive to pelvic organs",
+        "Altered autonomic balance"
+      ],
+      "consequences": [
+        "Inefficient bladder-neck contraction → urinary retention",
+        "High post-void residuals",
+        "Ejaculatory difficulty or diminished uterine contractility"
+      ],
+      "evidence": {
+        "level": "Moderate",
+        "targetSite": "Thoracolumbar preganglionic neurons express AR"
+      }
+    },
+    {
+      "id": "insulin-bpa-vagus",
+      "system": "Nervous",
+      "targetProtein": "Insulin Secretion (Pancreatic β, KATP Channels)",
+      "toxin": "BPA",
+      "nerve": "Vagus nerve (CN X)",
+      "keyFunctions": "Parasympathetic efferent & afferent fibers fine-tuning insulin secretion and gastric emptying",
+      "interaction": {
+        "description": "Nanomolar BPA provokes aberrant Ca²⁺ oscillations and insulin spikes from β-cells.",
+        "mechanism": "Erratic portal insulin feeds back via vagal afferents altering brainstem parasympathetic output"
+      },
+      "pathways": [
+        "Aberrant β-cell Ca²⁺ oscillations",
+        "Erratic insulin release patterns",
+        "Altered vagal afferent feedback"
+      ],
+      "consequences": [
+        "Short-term: oscillating vagal tone → dyspepsia, gastroparesis",
+        "Unstable post-prandial glycemia",
+        "Chronic: impaired cholinergic anti-inflammatory reflex",
+        "Higher baseline cytokines, metabolic syndrome risk"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "doseResponse": "Effects at nanomolar BPA concentrations"
+      }
+    },
+    {
+      "id": "insulin-bpa-celiac-mesenteric",
+      "system": "Nervous",
+      "targetProtein": "Insulin Secretion (Pancreatic β, KATP Channels)",
+      "toxin": "BPA",
+      "nerve": "Celiac & superior mesenteric plexuses",
+      "keyFunctions": "Mixed autonomic ganglia orchestrating pancreatic enzyme release, gut blood-flow and peristalsis",
+      "interaction": {
+        "description": "β-cell insulin dysregulation disrupts endocrine–autonomic crosstalk through prevertebral plexuses.",
+        "mechanism": "Hyper- or hypo-insulinemia distorts signaling through autonomic ganglia"
+      },
+      "pathways": [
+        "Disrupted endocrine–autonomic crosstalk",
+        "Mis-timed pancreatic exocrine output",
+        "Splanchnic vasomotor imbalance"
+      ],
+      "consequences": [
+        "Malabsorption, bloating",
+        "Post-prandial hypotension",
+        "Visceral pain"
+      ],
+      "evidence": {
+        "level": "Moderate",
+        "mechanisticBasis": "Insulin-autonomic feedback disruption"
+      }
+    },
+    {
+      "id": "insulin-bpa-tibial-peroneal",
+      "system": "Nervous",
+      "targetProtein": "Insulin Secretion (Pancreatic β, KATP Channels)",
+      "toxin": "BPA",
+      "nerve": "Tibial & peroneal nerves",
+      "keyFunctions": "Large mixed motor/sensory trunks frequently damaged in diabetic neuropathy",
+      "interaction": {
+        "description": "Persistent BPA-induced β-cell stress accelerates hyperglycemia and oxidative injury of distal axons.",
+        "mechanism": "Metabolic dysfunction leading to length-dependent neuropathy"
+      },
+      "pathways": [
+        "Persistent β-cell stress",
+        "Accelerated hyperglycemia",
+        "Oxidative injury of distal axons"
+      ],
+      "consequences": [
+        "Length-dependent numbness, burning feet",
+        "Gait instability",
+        "Slower plantar flexor conduction → reduced ankle reflexes"
+      ],
+      "evidence": {
+        "level": "Strong",
+        "pathology": "Classical diabetic neuropathy pattern accelerated by BPA"
+      }
+    },
+    {
+      "id": "steroid-glyphosate-sympathetic",
+      "system": "Nervous",
+      "targetProtein": "Steroidogenic Enzymes (cortisol production)",
+      "toxin": "Glyphosate",
+      "nerve": "Sympathetic nerves",
+      "keyFunctions": "Thoracic chain & splanchnic outflow maintaining vascular tone, cardiac output, thermogenesis",
+      "interaction": {
+        "description": "Low adrenal cortisol removes permissive boost that glucocorticoids give to catecholamine synthesis.",
+        "mechanism": "Reduced β-adrenergic receptor expression and catecholamine synthesis enzymes"
+      },
+      "pathways": [
+        "Cortisol deficiency",
+        "Reduced catecholamine synthesis",
+        "Blunted β-adrenergic receptor expression"
+      ],
+      "consequences": [
+        "Blunted sympathetic firing → orthostatic hypotension",
+        "Cold-intolerance, fatigue",
+        "Episodic HPA over-drive producing paradoxical heart-rate/BP surges"
+      ],
+      "evidence": {
+        "level": "Moderate",
+        "mechanisticBasis": "Glucocorticoid permissive effects on sympathetic function"
+      }
+    },
+    {
+      "id": "steroid-glyphosate-splanchnic",
+      "system": "Nervous",
+      "targetProtein": "Steroidogenic Enzymes (cortisol production)",
+      "toxin": "Glyphosate",
+      "nerve": "Greater splanchnic nerve",
+      "keyFunctions": "Preganglionic drive to adrenal medulla triggering epinephrine release",
+      "interaction": {
+        "description": "Cortisol up-regulates PNMT in adrenal medulla; glyphosate-induced cortisol shortfall lowers epinephrine synthesis.",
+        "mechanism": "Reduced phenylethanolamine N-methyltransferase (PNMT) activity"
+      },
+      "pathways": [
+        "Cortisol deficiency in adrenal medulla",
+        "Reduced PNMT expression",
+        "Lower epinephrine synthesis"
+      ],
+      "consequences": [
+        "Sub-optimal epinephrine surge response",
+        "Sluggish glucose mobilization",
+        "Poor exercise tolerance",
+        "Impaired fight-or-flight response"
+      ],
+      "evidence": {
+        "level": "Moderate",
+        "enzymaticBasis": "PNMT requires cortisol for optimal expression"
+      }
+    },
+    {
+      "id": "steroid-glyphosate-glossopharyngeal-vagus",
+      "system": "Nervous",
+      "targetProtein": "Steroidogenic Enzymes (cortisol production)",
+      "toxin": "Glyphosate",
+      "nerve": "Glossopharyngeal & vagus nerves",
+      "keyFunctions": "Baroreflex afferents/efferents modulating HRV, digestion, anti-inflammatory tone",
+      "interaction": {
+        "description": "Chronic hypocortisolism heightens baroreceptor sensitivity and augments basal vagal tone.",
+        "mechanism": "Persistent HPA activation feeds back to brainstem regulatory centers"
+      },
+      "pathways": [
+        "Heightened baroreceptor sensitivity",
+        "Augmented basal vagal tone",
+        "Persistent HPA activation with brainstem feedback"
+      ],
+      "consequences": [
+        "Bradycardia, dizziness, vasovagal syncope",
+        "Dyspepsia & altered motility",
+        "Possible contribution to vagal α-synuclein transport in Parkinson's"
+      ],
+      "evidence": {
+        "level": "Emerging",
+        "hypothesisLevel": "Glyphosate–Parkinson connection under investigation"
+      }
+    }
+  ],
+  "filterOptions": {
+    "systems": ["Nervous"],
+    "nerves": ["Vagus nerve", "Pelvic splanchnic", "Hypothalamic projections", "Sympathetic chain", "Phrenic nerve", "Peripheral sensory", "Pudendal nerve", "Sciatic & femoral", "Hypogastric nerve", "Celiac & mesenteric plexuses", "Tibial & peroneal", "Greater splanchnic", "Glossopharyngeal"],
+    "toxins": ["BPA", "PFAS", "Phthalates", "Glyphosate"],
+    "targets": ["Estrogen Receptor", "Transthyretin (TTR)", "Androgen Receptor (AR)", "Insulin Secretion", "Steroidogenic Enzymes"],
+    "evidenceLevel": ["Strong", "Moderate", "Emerging"],
+    "functionalSystems": ["Autonomic", "Motor", "Sensory", "Endocrine"]
+  },
+  "metadata": {
+    "lastUpdated": "2025-08-04",
+    "dataSource": "Nervous system toxicology database compilation",
+    "note": "Focuses on receptor-mediated mechanisms of nerve-specific toxin interactions with detailed pathway analysis",
+    "scope": "Comprehensive analysis of autonomic, motor, and sensory nerve disruption by environmental toxins"
+  }
+}

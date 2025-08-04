@@ -21,6 +21,9 @@
       
       <div class="sidebar-header">
         <div class="header-controls">
+          <h3>{{ currentMode === 'detox' ? 'Toxin Detox' : 
+                 currentMode === 'interactions' ? 'Molecular Interactions' : 
+                 'Nerve Interactions' }}</h3>
           <div class="mode-toggle">
             <el-button 
               :type="currentMode === 'detox' ? 'primary' : 'default'"
@@ -40,16 +43,17 @@
               <el-icon><Connection /></el-icon>
               Interactions
             </el-button>
+            <el-button 
+              :type="currentMode === 'nerves' ? 'primary' : 'default'"
+              size="large"
+              @click="setMode('nerves')"
+              class="mode-button nerves-button"
+            >
+              <el-icon><Lightning /></el-icon>
+              Nerves
+            </el-button>
           </div>
-          <h3>{{ currentMode === 'detox' ? 'Toxin Detox' : 'Molecular Interactions' }}</h3>
         </div>
-        <el-button 
-          type="text" 
-          @click="closeSidebar"
-          class="close-button"
-        >
-          <el-icon><Close /></el-icon>
-        </el-button>
       </div>
       
       <div class="sidebar-content">
@@ -61,7 +65,9 @@
           <span class="results-count">
             {{ currentMode === 'detox' ? 
                 `${filteredToxins.length} of ${toxinData.toxins.length} toxins` :
-                `${filteredInteractions.length} of ${interactionData.datasets.length} interactions`
+                currentMode === 'interactions' ?
+                `${filteredInteractions.length} of ${interactionData.datasets.length} interactions` :
+                `${filteredNerveInteractions.length} of ${nerveInteractionData.datasets.length} nerve interactions`
             }}
           </span>
           <el-button 
@@ -254,11 +260,106 @@
           </div>
         </div>
 
+        <!-- Nerve Interaction Cards (Nerves Mode) -->
+        <div v-if="currentMode === 'nerves'" class="nerve-interaction-cards">
+          <div 
+            v-for="interaction in filteredNerveInteractions" 
+            :key="interaction.id"
+            class="nerve-interaction-card"
+            @click="selectNerveInteraction(interaction)"
+            :class="{ 'selected': selectedNerveInteractions.includes(interaction.id) }"
+          >
+            <div class="card-header">
+              <h4>{{ interaction.targetProtein }}</h4>
+              <div class="nerve-interaction-badges">
+                <el-tag 
+                  :type="getEvidenceType(interaction.evidence.level)"
+                  size="small"
+                >
+                  {{ interaction.evidence.level }}
+                </el-tag>
+                <el-tag 
+                  type="warning"
+                  size="small"
+                >
+                  {{ interaction.nerve.split(' ')[0] }}
+                </el-tag>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <div class="nerve-interaction-info">
+                <div class="info-item">
+                  <strong>Nerve:</strong> {{ interaction.nerve }}
+                </div>
+                <div class="info-item">
+                  <strong>Toxin:</strong> {{ interaction.toxin }}
+                </div>
+                <div class="info-item">
+                  <strong>System:</strong> {{ interaction.system }}
+                </div>
+                <div class="info-item">
+                  <strong>Functions:</strong> {{ interaction.keyFunctions }}
+                </div>
+              </div>
+
+              <p class="nerve-interaction-description">
+                {{ interaction.interaction.description }}
+              </p>
+
+              <div class="pathways-info" v-if="interaction.pathways && interaction.pathways.length > 0">
+                <strong>Key Pathways:</strong>
+                <ul class="pathway-list">
+                  <li v-for="(pathway, index) in interaction.pathways.slice(0, 2)" :key="index">
+                    {{ pathway }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="consequences-info" v-if="interaction.consequences && interaction.consequences.length > 0">
+                <strong>Consequences:</strong>
+                <div class="consequence-tags">
+                  <el-tag 
+                    v-for="(consequence, index) in interaction.consequences.slice(0, 3)" 
+                    :key="index"
+                    type="danger"
+                    size="mini"
+                    class="consequence-tag"
+                  >
+                    {{ consequence.split('→')[0].trim() }}
+                  </el-tag>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <el-button 
+                type="primary" 
+                size="small"
+                @click.stop="viewNerveInteractionDetails(interaction)"
+              >
+                View Details
+              </el-button>
+              <el-button 
+                v-if="interaction.references && interaction.references.length > 0"
+                type="text" 
+                size="small"
+                @click.stop="openResearch(interaction.references[0].url)"
+              >
+                Research
+              </el-button>
+            </div>
+          </div>
+        </div>
+
         <!-- Empty State -->
         <div v-if="(currentMode === 'detox' && filteredToxins.length === 0) || 
-                   (currentMode === 'interactions' && filteredInteractions.length === 0)" 
+                   (currentMode === 'interactions' && filteredInteractions.length === 0) ||
+                   (currentMode === 'nerves' && filteredNerveInteractions.length === 0)" 
              class="empty-state">
-          <el-empty :description="`No ${currentMode === 'detox' ? 'toxins' : 'interactions'} match your filters`">
+          <el-empty :description="`No ${currentMode === 'detox' ? 'toxins' : 
+                                       currentMode === 'interactions' ? 'interactions' : 
+                                       'nerve interactions'} match your filters`">
             <el-button type="primary" @click="clearFilters">
               Clear Filters
             </el-button>
@@ -272,10 +373,11 @@
 <script>
 import { ref, computed } from 'vue'
 import { ElButton, ElTag, ElIcon, ElEmpty } from 'element-plus'
-import { Close, Aim, Connection } from '@element-plus/icons-vue'
+import { Close, Aim, Connection, Lightning } from '@element-plus/icons-vue'
 import ToxinFilter from './ToxinFilter.vue'
 import detoxificationData from './data/detoxification.json'
 import molecularInteractionsData from './data/molecular-interactions.json'
+import nerveInteractionsData from './data/nerve-interactions.json'
 
 export default {
   name: 'ToxinSidebar',
@@ -287,17 +389,20 @@ export default {
     ToxinFilter,
     Close,
     Aim,
-    Connection
+    Connection,
+    Lightning
   },
-  emits: ['close', 'toxin-selected', 'view-details', 'interaction-selected', 'view-interaction-details'],
+  emits: ['close', 'toxin-selected', 'view-details', 'interaction-selected', 'view-interaction-details', 'nerve-interaction-selected', 'view-nerve-interaction-details'],
   setup(props, { emit }) {
     const activeFilters = ref([])
     const selectedToxins = ref([])
     const selectedInteractions = ref([])
+    const selectedNerveInteractions = ref([])
     const toxinData = ref(detoxificationData)
     const interactionData = ref(molecularInteractionsData)
+    const nerveInteractionData = ref(nerveInteractionsData)
     const showSidebar = ref(false) // Start with sidebar closed to show the tab
-    const currentMode = ref('detox') // 'detox' or 'interactions'
+    const currentMode = ref('detox') // 'detox', 'interactions', or 'nerves'
 
     const filteredToxins = computed(() => {
       if (activeFilters.value.length === 0) {
@@ -345,12 +450,41 @@ export default {
       })
     })
 
+    const filteredNerveInteractions = computed(() => {
+      if (activeFilters.value.length === 0) {
+        return nerveInteractionData.value.datasets
+      }
+
+      return nerveInteractionData.value.datasets.filter(interaction => {
+        return activeFilters.value.every(filter => {
+          const { category, value } = filter
+          
+          // Handle different filter categories for nerve interactions
+          switch (category) {
+            case 'system':
+              return interaction.system.toLowerCase() === value.toLowerCase()
+            case 'toxin':
+              return interaction.toxin.toLowerCase().includes(value.toLowerCase())
+            case 'evidenceLevel':
+              return interaction.evidence.level.toLowerCase() === value.toLowerCase()
+            case 'nerve':
+              return interaction.nerve.toLowerCase().includes(value.toLowerCase())
+            case 'targetProtein':
+              return interaction.targetProtein.toLowerCase().includes(value.toLowerCase())
+            default:
+              return true
+          }
+        })
+      })
+    })
+
     const setMode = (mode) => {
       currentMode.value = mode
       // Clear filters when switching modes
       activeFilters.value = []
       selectedToxins.value = []
       selectedInteractions.value = []
+      selectedNerveInteractions.value = []
     }
 
     const selectInteraction = (interaction) => {
@@ -363,8 +497,22 @@ export default {
       emit('interaction-selected', selectedInteractions.value)
     }
 
+    const selectNerveInteraction = (interaction) => {
+      const index = selectedNerveInteractions.value.indexOf(interaction.id)
+      if (index > -1) {
+        selectedNerveInteractions.value.splice(index, 1)
+      } else {
+        selectedNerveInteractions.value.push(interaction.id)
+      }
+      emit('nerve-interaction-selected', selectedNerveInteractions.value)
+    }
+
     const viewInteractionDetails = (interaction) => {
       emit('view-interaction-details', interaction)
+    }
+
+    const viewNerveInteractionDetails = (interaction) => {
+      emit('view-nerve-interaction-details', interaction)
     }
 
     const getEvidenceType = (level) => {
@@ -439,16 +587,21 @@ export default {
       activeFilters,
       selectedToxins,
       selectedInteractions,
+      selectedNerveInteractions,
       toxinData,
       interactionData,
+      nerveInteractionData,
       filteredToxins,
       filteredInteractions,
+      filteredNerveInteractions,
       handleFilterChange,
       clearFilters,
       selectToxin,
       selectInteraction,
+      selectNerveInteraction,
       viewDetails,
       viewInteractionDetails,
+      viewNerveInteractionDetails,
       openResearch,
       closeSidebar,
       openSidebar,
@@ -537,9 +690,6 @@ export default {
   .sidebar-header {
     padding: 20px;
     border-bottom: 1px solid #e4e7ed;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background: #f5f7fa;
     flex-shrink: 0; // Prevent header from shrinking
 
@@ -547,31 +697,42 @@ export default {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      flex: 1;
+
+      h3 {
+        margin: 0;
+        color: #303133;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e4e7ed;
+        width: 100%;
+        display: block;
+      }
 
       .mode-toggle {
         display: flex;
-        gap: 12px;
+        gap: 8px;
         justify-content: center;
         width: 100%;
 
         .mode-button {
           flex: 1;
-          padding: 16px 20px;
-          font-size: 16px;
+          padding: 12px 8px;
+          font-size: 13px;
           font-weight: 600;
-          border-radius: 12px;
+          border-radius: 10px;
           transition: all 0.3s ease;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
-          min-height: 60px;
+          gap: 6px;
+          min-height: 45px;
           position: relative;
           overflow: hidden;
 
           .el-icon {
-            font-size: 20px;
+            font-size: 16px;
           }
 
           &.detox-button {
@@ -595,6 +756,18 @@ export default {
               background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
               color: #8b5cf6;
               border: 2px solid #8b5cf6;
+            }
+          }
+
+          &.nerves-button {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            color: white;
+            
+            &:not(.el-button--primary) {
+              background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+              color: #d97706;
+              border: 2px solid #d97706;
             }
           }
 
@@ -626,24 +799,6 @@ export default {
             transform: translateY(0);
           }
         }
-      }
-
-      h3 {
-        margin: 0;
-        color: #303133;
-        font-size: 16px;
-        font-weight: 600;
-        text-align: left;
-      }
-    }
-
-    .close-button {
-      padding: 4px;
-      color: #909399;
-      flex-shrink: 0;
-      
-      &:hover {
-        color: #606266;
       }
     }
   }
@@ -687,8 +842,15 @@ export default {
     gap: 16px;
   }
 
+  .nerve-interaction-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
   .toxin-card,
-  .interaction-card {
+  .interaction-card,
+  .nerve-interaction-card {
     border: 1px solid #e4e7ed;
     border-radius: 8px;
     padding: 16px;
@@ -723,7 +885,8 @@ export default {
       }
 
       .toxin-badges,
-      .interaction-badges {
+      .interaction-badges,
+      .nerve-interaction-badges {
         display: flex;
         gap: 4px;
         flex-wrap: wrap;
@@ -733,7 +896,8 @@ export default {
 
     .card-content {
       .toxin-description,
-      .interaction-description {
+      .interaction-description,
+      .nerve-interaction-description {
         font-size: 13px;
         color: #606266;
         margin-bottom: 12px;
@@ -741,7 +905,8 @@ export default {
       }
 
       .toxin-info,
-      .interaction-info {
+      .interaction-info,
+      .nerve-interaction-info {
         margin-bottom: 12px;
 
         .info-item {
@@ -751,6 +916,44 @@ export default {
 
           strong {
             color: #303133;
+          }
+        }
+      }
+
+      .pathways-info,
+      .consequences-info {
+        margin-bottom: 12px;
+
+        strong {
+          display: block;
+          font-size: 12px;
+          color: #303133;
+          margin-bottom: 6px;
+        }
+
+        .pathway-list {
+          margin: 0;
+          padding-left: 16px;
+          
+          li {
+            font-size: 11px;
+            color: #606266;
+            line-height: 1.3;
+            margin-bottom: 2px;
+          }
+        }
+
+        .consequence-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+
+          .consequence-tag {
+            font-size: 10px;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
       }
