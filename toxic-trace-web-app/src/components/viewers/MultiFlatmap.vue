@@ -37,9 +37,9 @@
         
         <el-button 
           @click="togglePdbViewer"
-          :type="showPdbViewer ? 'primary' : 'default'"
+          type="default"
         >
-          {{ showPdbViewer ? '❌ Hide Viewer' : '🧬 Molecular Viewer' }}
+          🧬 Open Molecular Viewer
         </el-button>
         
         <el-button 
@@ -203,31 +203,21 @@
       </template>
     </el-dialog>
 
-    <!-- PDB Molecular Viewer in Dialog -->
-    <el-dialog
-      v-model="showPdbViewer"
-      title="🧬 Molecular Structure Viewer"
-      width="95%"
-      :close-on-click-modal="false"
-      :close-on-press-escape="true"
-      append-to-body
-      class="pdb-viewer-dialog"
-    >
-      <div class="pdb-viewer-container">
+    <!-- Full-screen PDB Viewer Overlay -->
+    <div v-if="showPdbViewer" class="pdb-viewer-overlay" @click="closePdbViewer">
+      <div class="pdb-viewer-content" @click.stop>
+        <div class="pdb-viewer-header">
+          <h3>🧬 Molecular Structure Viewer</h3>
+          <button @click="closePdbViewer" class="close-button">✕</button>
+        </div>
         <iframe 
-          :src="pdbViewerUrl"
-          frameborder="0"
+          src="/pdb_viewer.html"
           class="pdb-viewer-iframe"
+          frameborder="0"
           title="Molecular Structure Viewer"
         ></iframe>
       </div>
-      
-      <template #footer>
-        <el-button @click="showPdbViewer = false" type="info">
-          ✕ Close Molecular Viewer
-        </el-button>
-      </template>
-    </el-dialog>
+    </div>
 
     <!-- Toxin Sidebar (always rendered so tab is always visible) -->
     <ToxinSidebar
@@ -620,9 +610,6 @@ export default {
         case 'detoxPlan':
           this.showDetoxPlan = !this.showDetoxPlan;
           break;
-        case 'pdbViewer':
-          this.showPdbViewer = !this.showPdbViewer;
-          break;
         case 'toxinSidebar':
           this.showToxinSidebar = !this.showToxinSidebar;
           break;
@@ -638,7 +625,6 @@ export default {
     closeAllPopups: function() {
       this.showQuiz = false;
       this.showDetoxPlan = false;
-      this.showPdbViewer = false;
       this.showToxinSidebar = false;
       this.fundingPopupVisible = false;
     },
@@ -654,7 +640,10 @@ export default {
       this.togglePopup('detoxPlan');
     },
     togglePdbViewer: function() {
-      this.togglePopup('pdbViewer');
+      this.showPdbViewer = !this.showPdbViewer;
+    },
+    closePdbViewer: function() {
+      this.showPdbViewer = false;
     },
     closeToxinSidebar: function() {
       this.showToxinSidebar = false;
@@ -847,10 +836,6 @@ export default {
     },
     isSVGFile() {
       return this.selectedMapImage.toLowerCase().endsWith('.svg');
-    },
-    pdbViewerUrl() {
-      // Return the path to your PDB viewer HTML file in the public directory
-      return '/pdb_viewer.html';
     }
   },
   watch: {
@@ -1085,63 +1070,6 @@ export default {
   }
 }
 
-// PDB Viewer Dialog Styles
-:deep(.pdb-viewer-dialog) {
-  .el-dialog {
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  }
-  
-  .el-dialog__header {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    color: white;
-    border-radius: 12px 12px 0 0;
-    padding: 20px 24px;
-    
-    .el-dialog__title {
-      font-size: 20px;
-      font-weight: 600;
-      color: white;
-    }
-    
-    .el-dialog__headerbtn {
-      .el-dialog__close {
-        color: white;
-        font-size: 18px;
-        
-        &:hover {
-          color: #f0f0f0;
-        }
-      }
-    }
-  }
-  
-  .el-dialog__body {
-    padding: 0;
-    height: 75vh;
-    
-    .pdb-viewer-container {
-      width: 100%;
-      height: 100%;
-      
-      .pdb-viewer-iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-        background-color: #1a1a1a;
-      }
-    }
-  }
-  
-  .el-dialog__footer {
-    padding: 16px 24px;
-    background-color: #f8f9fa;
-    border-radius: 0 0 12px 12px;
-    border-top: 1px solid #e9ecef;
-    text-align: center;
-  }
-}
-
 // Make sure the dialog appears above other elements
 :deep(.el-overlay-dialog) {
   z-index: 2000;
@@ -1231,6 +1159,71 @@ export default {
       }
     }
   }
+}
+
+.pdb-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdb-viewer-content {
+  width: 95vw;
+  height: 95vh;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.pdb-viewer-header {
+  background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pdb-viewer-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.pdb-viewer-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.pdb-viewer-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.pdb-viewer-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  flex: 1;
 }
 
 </style>
