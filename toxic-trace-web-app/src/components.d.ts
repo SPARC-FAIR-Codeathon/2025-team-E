@@ -49,6 +49,7 @@ declare module 'vue' {
     FlatmapContextCard: typeof import('./components/FlatmapContextCard.vue')['default']
     HealthQuiz: typeof import('./components/HealthQuiz.vue')['default']
     Iframe: typeof import('./components/viewers/Iframe.vue')['default']
+    LiverInfoPopup: typeof import('./components/organ-pages/LiverInfoPopup.vue')['default']
     MapContent: typeof import('./components/MapContent.vue')['default']
     MultiFlatmap: typeof import('./components/viewers/MultiFlatmap.vue')['default']
     MyDetoxPlan: typeof import('./components/MyDetoxPlan.vue')['default']

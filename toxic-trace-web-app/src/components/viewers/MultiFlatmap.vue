@@ -203,6 +203,12 @@
       </template>
     </el-dialog>
 
+    <!-- Liver Information Popup -->
+    <LiverInfoPopup 
+      :show-dialog="showLiverInfo"
+      @close="showLiverInfo = false"
+    />
+
     <!-- Full-screen PDB Viewer Overlay -->
     <div v-if="showPdbViewer" class="pdb-viewer-overlay" @click="closePdbViewer">
       <div class="pdb-viewer-content" @click.stop>
@@ -255,6 +261,7 @@ import YellowStar from "../../icons/yellowstar";
 import HealthQuiz from "../HealthQuiz.vue";
 import ToxinSidebar from "../ToxinSidebar.vue";
 import MyDetoxPlan from "../MyDetoxPlan.vue";
+import LiverInfoPopup from "../organ-pages/LiverInfoPopup.vue";
 
 import { MultiFlatmapVuer } from "@abi-software/flatmapvuer";
 import "@abi-software/flatmapvuer/dist/style.css";
@@ -288,6 +295,7 @@ export default {
     HealthQuiz,
     ToxinSidebar,
     MyDetoxPlan,
+    LiverInfoPopup,
   },
   data: function () {
     return {
@@ -303,6 +311,7 @@ export default {
       showToxinSidebar: false,
       showDetoxPlan: false,
       showPdbViewer: false,
+      showLiverInfo: false,
       fundingPopupVisible: false,
       // Health percentages for each organ (constants for now)
       organHealthData: {
@@ -817,6 +826,11 @@ export default {
     },
     onOrganClick: function(organId, organName) {
       console.log(`Clicked on ${organName} (${organId})`);
+      
+      // Show liver information popup when liver is clicked
+      if (organId === 'liver') {
+        this.showLiverInfo = true;
+      }
     },
   },
   computed: {
