@@ -58,9 +58,9 @@
       <el-button 
         type="primary" 
         size="small"
-        @click.stop="$emit('view-details', interaction)"
+        @click.stop="showDetailPopup = true"
       >
-        View 3D Structure
+        View Details
       </el-button>
       <el-button 
         v-if="interaction.references && interaction.references.length > 0"
@@ -71,17 +71,28 @@
         Research
       </el-button>
     </div>
+
+    <!-- Detail Popup -->
+    <InteractionDetailPopup
+      v-model="showDetailPopup"
+      :interaction="interaction"
+      @view-structure="handleViewStructure"
+      @open-research="handleOpenResearch"
+    />
   </div>
 </template>
 
 <script>
+import { ref } from 'vue'
 import { ElButton, ElTag } from 'element-plus'
+import InteractionDetailPopup from '../popups/InteractionDetailPopup.vue'
 
 export default {
   name: 'InteractionCard',
   components: {
     ElButton,
-    ElTag
+    ElTag,
+    InteractionDetailPopup
   },
   props: {
     interaction: {
@@ -93,15 +104,32 @@ export default {
       default: false
     }
   },
-  emits: ['select', 'view-details', 'open-research'],
-  methods: {
-    getEvidenceType(level) {
+  emits: ['select', 'view-details', 'open-research', 'view-structure'],
+  setup(props, { emit }) {
+    const showDetailPopup = ref(false)
+
+    const handleViewStructure = (pdbId) => {
+      emit('view-structure', pdbId)
+    }
+
+    const handleOpenResearch = (url) => {
+      emit('open-research', url)
+    }
+
+    const getEvidenceType = (level) => {
       switch (level.toLowerCase()) {
         case 'strong': return 'success'
         case 'moderate': return 'warning'
         case 'emerging': return 'info'
         default: return 'info'
       }
+    }
+
+    return {
+      showDetailPopup,
+      handleViewStructure,
+      handleOpenResearch,
+      getEvidenceType
     }
   }
 }

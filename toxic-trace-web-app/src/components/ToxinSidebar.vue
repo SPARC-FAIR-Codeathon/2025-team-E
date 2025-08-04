@@ -403,7 +403,7 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 9999; // Very high z-index to ensure it's always visible
+  z-index: 10; 
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   color: white;
@@ -428,7 +428,7 @@ export default {
   position: fixed;
   right: 0;
   top: 0;
-  z-index: 9998; // High z-index but slightly lower than tab
+  z-index: 9; // High z-index but slightly lower than tab
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
 
   // Close Tab (when sidebar is open)
@@ -445,7 +445,7 @@ export default {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 10000; // Higher than sidebar itself
+    z-index: 10; // Higher than sidebar itself
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     color: white;

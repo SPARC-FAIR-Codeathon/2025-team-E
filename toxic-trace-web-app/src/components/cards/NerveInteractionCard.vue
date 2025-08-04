@@ -71,7 +71,7 @@
       <el-button 
         type="primary" 
         size="small"
-        @click.stop="$emit('view-details', interaction)"
+        @click.stop="showDetailPopup = true"
       >
         View Details
       </el-button>
@@ -84,17 +84,27 @@
         Research
       </el-button>
     </div>
+
+    <!-- Detail Popup -->
+    <NerveInteractionDetailPopup
+      v-model="showDetailPopup"
+      :interaction="interaction"
+      @open-research="handleOpenResearch"
+    />
   </div>
 </template>
 
 <script>
+import { ref } from 'vue'
 import { ElButton, ElTag } from 'element-plus'
+import NerveInteractionDetailPopup from '../popups/NerveInteractionDetailPopup.vue'
 
 export default {
   name: 'NerveInteractionCard',
   components: {
     ElButton,
-    ElTag
+    ElTag,
+    NerveInteractionDetailPopup
   },
   props: {
     interaction: {
@@ -107,14 +117,26 @@ export default {
     }
   },
   emits: ['select', 'view-details', 'open-research'],
-  methods: {
-    getEvidenceType(level) {
+  setup(props, { emit }) {
+    const showDetailPopup = ref(false)
+
+    const handleOpenResearch = (url) => {
+      emit('open-research', url)
+    }
+
+    const getEvidenceType = (level) => {
       switch (level.toLowerCase()) {
         case 'strong': return 'success'
         case 'moderate': return 'warning'
         case 'emerging': return 'info'
         default: return 'info'
       }
+    }
+
+    return {
+      showDetailPopup,
+      handleOpenResearch,
+      getEvidenceType
     }
   }
 }

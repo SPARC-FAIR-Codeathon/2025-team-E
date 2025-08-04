@@ -80,7 +80,7 @@
       <el-button 
         type="primary" 
         size="small"
-        @click.stop="$emit('view-details', toxin)"
+        @click.stop="showDetailPopup = true"
       >
         View Details
       </el-button>
@@ -93,17 +93,27 @@
         Research
       </el-button>
     </div>
+
+    <!-- Detail Popup -->
+    <ToxinDetailPopup
+      v-model="showDetailPopup"
+      :toxin="toxin"
+      @open-research="handleOpenResearch"
+    />
   </div>
 </template>
 
 <script>
+import { ref } from 'vue'
 import { ElButton, ElTag } from 'element-plus'
+import ToxinDetailPopup from '../popups/ToxinDetailPopup.vue'
 
 export default {
   name: 'ToxinCard',
   components: {
     ElButton,
-    ElTag
+    ElTag,
+    ToxinDetailPopup
   },
   props: {
     toxin: {
@@ -116,24 +126,40 @@ export default {
     }
   },
   emits: ['select', 'view-details', 'open-research'],
-  methods: {
-    capitalizeFirst(str) {
+  setup(props, { emit }) {
+    const showDetailPopup = ref(false)
+
+    const handleOpenResearch = (url) => {
+      emit('open-research', url)
+    }
+
+    const capitalizeFirst = (str) => {
       return str.charAt(0).toUpperCase() + str.slice(1)
-    },
-    getSeverityType(severity) {
+    }
+
+    const getSeverityType = (severity) => {
       switch (severity) {
         case 'high': return 'danger'
         case 'moderate': return 'warning'
         default: return 'info'
       }
-    },
-    getDifficultyType(difficulty) {
+    }
+
+    const getDifficultyType = (difficulty) => {
       switch (difficulty) {
         case 'difficult': return 'danger'
         case 'moderate': return 'warning'
         case 'easy': return 'success'
         default: return 'info'
       }
+    }
+
+    return {
+      showDetailPopup,
+      handleOpenResearch,
+      capitalizeFirst,
+      getSeverityType,
+      getDifficultyType
     }
   }
 }
