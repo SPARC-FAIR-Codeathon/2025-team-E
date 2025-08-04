@@ -1019,8 +1019,25 @@
             }
         });
 
+        // Load default PDB file
+        async function loadDefaultStructure() {
+            try {
+                const response = await fetch('./est_oht.pdb');
+                if (response.ok) {
+                    const pdbData = await response.text();
+                    addStructure('est_oht.pdb', pdbData);
+                    viewer.zoomTo();
+                }
+            } catch (error) {
+                console.log('Could not load default structure:', error);
+            }
+        }
+
         // Initialize viewer on load
-        window.addEventListener('load', initViewer);
+        window.addEventListener('load', () => {
+            initViewer();
+            loadDefaultStructure();
+        });
     </script>
 </body>
 </html>

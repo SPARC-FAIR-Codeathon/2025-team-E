@@ -35,6 +35,18 @@ export default defineConfig(({ command, mode }) => {
     // to prevent reloading after optimized dependencies changed
     optimizeDeps: {
       exclude: ["vue-router"],
+      include: ["vue", "@vue/shared", "element-plus"],
+    },
+    build: {
+      rollupOptions: {
+        external: [],
+        output: {
+          manualChunks: undefined,
+        },
+      },
+      commonjsOptions: {
+        include: [/node_modules/],
+      },
     },
   };
 
