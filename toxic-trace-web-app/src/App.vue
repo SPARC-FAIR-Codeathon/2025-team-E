@@ -2,36 +2,6 @@
   <div id="app">
     <link rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Asap:400,400i,500,600,700&display=swap">
-      <div class="button-container">
-        <el-popover
-          placement="bottom"
-          trigger="click"
-          width=500
-          class="popover"
-          :teleported=false
-          >
-            <div class="options-container">
-              <div class="row">
-                <el-button @click="saveSettings()" size="small">Save Settings</el-button>
-                <el-button @click="restoreSettings()" size="small">Restore Settings</el-button>
-                <el-button @click="getShareableURL()" size="small">Get Link</el-button>
-              </div>
-              <div class="row">
-                <el-button @click="setMultiFlatmap()" size="small">Set MultiFlatmap</el-button>
-                <el-button @click="setLegacyMultiFlatmap()" size="small">Set Legacy MultiFlatmap</el-button>
-                <el-button @click="setScaffold()" size="small">Set To Scaffold</el-button>
-                <el-button @click="setWholebody()" size="small">Set to Wholebody</el-button>
-                <el-button @click="setFlatmap()" size="small">Set Flatmap</el-button>
-                <el-button @click="setSearch()" size="small">Set Search</el-button>
-              </div>
-            </div>
-            <template #reference>
-
-                <el-button class="options-button" :icon="ElIconSetting">Options</el-button>
-
-            </template>
-        </el-popover>
-      </div>
     <div class="map-app">
       <MapContent
         ref="map"
@@ -343,7 +313,8 @@ body {
 .map-app {
   margin: 0 auto;
   width: calc(100% - #{$gap * 2});
-  height: calc(100% - #{$button-container-size + $gap});
+  height: calc(100% - #{$gap * 2});
+  margin-top: $gap;
   border: solid 1px #dcdfe6;
   box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
@@ -360,11 +331,7 @@ body {
 .row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
 
-  + .row {
-    margin-top: 12px;
-  }
 
   .el-button + .el-button {
     margin: 0;

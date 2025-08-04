@@ -17,22 +17,53 @@
   <!-- Brain -->
   <ellipse cx="150" cy="80" rx="30" ry="20" class="organ brain" />
   
+  <!-- Smiley Face -->
+  <circle cx="135" cy="110" r="2" fill="black" />
+  <circle cx="165" cy="110" r="2" fill="black" />
+  <path d="M140 120 Q150 130 160 120" stroke="black" stroke-width="2" fill="none" />
+  
+  <!-- Arms -->
+  <!-- Left arm -->
+  <line x1="100" y1="200" x2="80" y2="220" stroke="black" stroke-width="2" />
+  <!-- Left hand with loop fingers (flower petals) -->
+  <ellipse cx="78" cy="218" rx="3" ry="5" class="outline" transform="rotate(-30 78 218)" />
+  <ellipse cx="76" cy="222" rx="3" ry="5" class="outline" transform="rotate(0 76 222)" />
+  <ellipse cx="78" cy="226" rx="3" ry="5" class="outline" transform="rotate(30 78 226)" />
+  
+  <!-- Right arm -->
+  <line x1="200" y1="200" x2="220" y2="220" stroke="black" stroke-width="2" />
+  <!-- Right hand with loop fingers (flower petals) -->
+  <ellipse cx="222" cy="218" rx="3" ry="5" class="outline" transform="rotate(30 222 218)" />
+  <ellipse cx="224" cy="222" rx="3" ry="5" class="outline" transform="rotate(0 224 222)" />
+  <ellipse cx="222" cy="226" rx="3" ry="5" class="outline" transform="rotate(-30 222 226)" />
+  
+  <!-- Legs -->
+  <!-- Left leg -->
+  <line x1="130" y1="650" x2="130" y2="680" stroke="black" stroke-width="2" />
+  <!-- Left foot -->
+  <line x1="130" y1="680" x2="120" y2="680" stroke="black" stroke-width="2" />
+  
+  <!-- Right leg -->
+  <line x1="170" y1="650" x2="170" y2="680" stroke="black" stroke-width="2" />
+  <!-- Right foot -->
+  <line x1="170" y1="680" x2="180" y2="680" stroke="black" stroke-width="2" />
+  
   <!-- Lungs -->
-  <ellipse cx="130" cy="150" rx="20" ry="40" class="organ lungs" />
-  <ellipse cx="170" cy="150" rx="20" ry="40" class="organ lungs" />
+  <ellipse cx="130" cy="180" rx="20" ry="40" class="organ lungs" />
+  <ellipse cx="170" cy="180" rx="20" ry="40" class="organ lungs" />
   
   <!-- Heart -->
-  <path d="M145 170 Q150 160 155 170 Q160 180 150 190 Q140 180 145 170 Z" class="organ heart" />
+  <path d="M145 200 Q150 190 155 200 Q160 210 150 220 Q140 210 145 200 Z" class="organ heart" />
   
   <!-- Liver -->
-  <ellipse cx="140" cy="230" rx="40" ry="20" class="organ liver" />
+  <ellipse cx="140" cy="260" rx="40" ry="20" class="organ liver" />
   
   <!-- Stomach -->
-  <ellipse cx="170" cy="260" rx="20" ry="30" class="organ stomach" />
+  <ellipse cx="170" cy="290" rx="20" ry="30" class="organ stomach" />
   
   <!-- Small Intestine -->
-  <path d="M130 300 Q140 310 130 320 Q140 330 130 340 Q140 350 130 360" class="organ intestine-small" />
+  <path d="M130 330 Q140 340 130 350 Q140 360 130 370 Q140 380 130 390" class="organ intestine-small" />
   
   <!-- Large Intestine -->
-  <rect x="110" y="290" width="80" height="100" rx="15" class="organ intestine-large" />
+  <rect x="110" y="320" width="80" height="100" rx="15" class="organ intestine-large" />
 </svg>

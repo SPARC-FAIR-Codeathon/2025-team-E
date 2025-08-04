@@ -68,6 +68,7 @@ declare module 'vue' {
     Simulation: typeof import('./components/viewers/Simulation.vue')['default']
     SplitDialog: typeof import('./components/SplitDialog.vue')['default']
     SplitFlow: typeof import('./components/SplitFlow.vue')['default']
+    SupportResearchPopover: typeof import('./components/SupportResearchPopover.vue')['default']
     ToxinCard: typeof import('./components/cards/ToxinCard.vue')['default']
     ToxinDetailPopup: typeof import('./components/popups/ToxinDetailPopup.vue')['default']
     ToxinFilter: typeof import('./components/ToxinFilter.vue')['default']
