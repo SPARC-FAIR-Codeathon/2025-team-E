@@ -195,7 +195,7 @@ export default {
 }
 
 .component-container {
-  height: calc(100% - 32px);
+  height: calc(100%);
   width: 100%;
   bottom: 0px;
   position: absolute;

@@ -397,7 +397,7 @@ export default {
   transform: translateY(-50%);
   width: 30px;
   height: 60px;
-  background: #409eff;
+  background: #7c3aed;
   border-radius: 8px 0 0 8px;
   display: flex;
   align-items: center;
@@ -412,7 +412,7 @@ export default {
   border: 2px solid #fff; // Add white border to make it more visible
 
   &:hover {
-    background: #66b1ff;
+    background: #9d46f5;
     width: 35px;
     box-shadow: -4px 0 12px rgba(0, 0, 0, 0.4);
   }
@@ -439,7 +439,7 @@ export default {
     transform: translateY(-50%);
     width: 30px;
     height: 60px;
-    background: #409eff;
+    background: #7c3aed;
     border-radius: 8px 0 0 8px;
     display: flex;
     align-items: center;
@@ -454,7 +454,7 @@ export default {
     border: 2px solid #fff; // Add white border to make it more visible
 
     &:hover {
-      background: #66b1ff;
+      background: #9d46f5;
       left: -35px;
       box-shadow: -4px 0 12px rgba(0, 0, 0, 0.4);
     }

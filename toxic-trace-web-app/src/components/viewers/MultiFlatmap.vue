@@ -50,80 +50,10 @@
           🔄 Reset Health Data
         </el-button>
 
-        <el-popover
-          placement="bottom"
-          :teleported="false"
-          trigger="manual"
-          :width="400"
-          :offset="0"
-          popper-class="funding-popover"
+        <SupportResearchPopover 
           :visible="fundingPopupVisible"
-        >
-          <template #default>
-            <div class="funding-content">
-              <h3 class="funding-title">Support Our Research</h3>
-              <div class="funding-links">
-                <div class="funding-item">
-                  <a href="https://donate.stripe.com/8x214n9Pq834cUS30T1Nu04" 
-                     class="funding-button subscription-button"
-                     target="_blank"
-                     rel="noopener noreferrer">
-                    Subscribe to BPA Research
-                  </a>
-                </div>
-                <div class="funding-item">
-                  <a href="https://buy.stripe.com/aFa9ATbXy6Z08EC1WP1Nu03" 
-                     class="funding-button support-button"
-                     target="_blank"
-                     rel="noopener noreferrer">
-                    Support to Trace BPA in Food
-                  </a>
-                </div>
-                <div class="funding-item">
-                  <a href="https://donate.stripe.com/4gM5kD8Lmers9IGgRJ1Nu05" 
-                     class="funding-button subscription-button"
-                     target="_blank"
-                     rel="noopener noreferrer">
-                    Subscribe to PFAS Research
-                  </a>
-                </div>
-                <div class="funding-item">
-                  <a href="https://buy.stripe.com/7sYdR92mY1EGbQO0SL1Nu06" 
-                     class="funding-button support-button"
-                     target="_blank"
-                     rel="noopener noreferrer">
-                    Support to Trace PFAS in Food
-                  </a>
-                </div>
-                <div class="funding-item">
-                  <a href="https://donate.stripe.com/9B65kD5zaabc3kiatl1Nu08" 
-                     class="funding-button subscription-button"
-                     target="_blank"
-                     rel="noopener noreferrer">
-                    Subscribe to Phthalates Research
-                  </a>
-                </div>
-                <div class="funding-item">
-                  <a href="https://buy.stripe.com/5kQeVd0eQcjk6wubxp1Nu07" 
-                     class="funding-button support-button"
-                     target="_blank"
-                     rel="noopener noreferrer">
-                    Support to Trace Phthalates in Food
-                  </a>
-                </div>
-              </div>
-            </div>
-          </template>
-          <template #reference>
-            <el-button 
-              @click="toggleFundingPopup"
-              type="danger"
-              size="small"
-            >
-              ❤️ Support Research
-            </el-button>
-          </template>
-        </el-popover>
+          @toggle="toggleFundingPopup"
+        />
       </div>
     </div>
     
@@ -276,6 +206,7 @@ import MyDetoxPlan from "../MyDetoxPlan.vue";
 import LiverInfoPopup from "../organ-pages/LiverInfoPopup.vue";
 import LungInfoPopup from "../organ-pages/LungInfoPopup.vue";
 import BrainInfoPopup from "../organ-pages/BrainInfoPopup.vue";
+import SupportResearchPopover from "../SupportResearchPopover.vue";
 
 import { MultiFlatmapVuer } from "@abi-software/flatmapvuer";
 import "@abi-software/flatmapvuer/dist/style.css";
@@ -312,6 +243,7 @@ export default {
     LiverInfoPopup,
     LungInfoPopup,
     BrainInfoPopup,
+    SupportResearchPopover,
   },
   data: function () {
     return {
@@ -333,13 +265,13 @@ export default {
       fundingPopupVisible: false,
       // Health percentages for each organ (constants for now)
       organHealthData: {
-        'brain': { health: 95, x: 150, y: 80 },
-        'heart': { health: 87, x: 150, y: 180 },
-        'lungs': { health: 92, x: 150, y: 150 },
-        'liver': { health: 78, x: 140, y: 230 },
-        'stomach': { health: 83, x: 170, y: 260 },
-        'intestine-small': { health: 89, x: 130, y: 330 },
-        'intestine-large': { health: 76, x: 150, y: 345 }
+          'brain': { health: -1, x: 150, y: 80 },
+          'heart': { health: -1, x: 150, y: 180 },
+          'lungs': { health: -1, x: 150, y: 150 },
+          'liver': { health: -1, x: 140, y: 230 },
+          'stomach': { health: -1, x: 170, y: 260 },
+          'intestine-small': { health: -1, x: 130, y: 330 },
+          'intestine-large': { health: -1, x: 150, y: 345 }
       },
       mapOptions: [
         { value: 'full-body', label: 'Full Body', image: '/body-system-images/full-body.svg' },
@@ -565,6 +497,7 @@ export default {
       overlayGroup.setAttribute('id', 'health-overlays');
       
       Object.keys(this.organHealthData).forEach(organClass => {
+        if (this.organHealthData[organClass].health == -1) return; // Skip if health data is not set
         const healthData = this.organHealthData[organClass];
         const organElements = svgDoc.querySelectorAll(`.${organClass}`);
         
@@ -688,7 +621,8 @@ export default {
       console.log('View toxin details:', toxin);
     },
     toggleFundingPopup: function() {
-      this.togglePopup('fundingPopup');
+      // Toggle the funding popup visibility
+      this.fundingPopupVisible = !this.fundingPopupVisible;
     },
     onHealthDataUpdated: function(healthData) {
       // Update organ health data with quiz results
@@ -779,13 +713,13 @@ export default {
         
         // Reset to default health values
         this.organHealthData = {
-          'brain': { health: 95, x: 150, y: 80 },
-          'heart': { health: 87, x: 150, y: 180 },
-          'lungs': { health: 92, x: 150, y: 150 },
-          'liver': { health: 78, x: 140, y: 230 },
-          'stomach': { health: 83, x: 170, y: 260 },
-          'intestine-small': { health: 89, x: 130, y: 330 },
-          'intestine-large': { health: 76, x: 150, y: 345 }
+          'brain': { health: -1, x: 150, y: 80 },
+          'heart': { health: -1, x: 150, y: 180 },
+          'lungs': { health: -1, x: 150, y: 150 },
+          'liver': { health: -1, x: 140, y: 230 },
+          'stomach': { health: -1, x: 170, y: 260 },
+          'intestine-small': { health: -1, x: 130, y: 330 },
+          'intestine-large': { health: -1, x: 150, y: 345 }
         };
         
         // Refresh overlays if SVG is loaded
@@ -818,6 +752,9 @@ export default {
         });
       }
       
+      // Add global CSS for Chatbase styling
+      this.addChatbaseStyles();
+      
       // Load the Chatbase script
       const script = document.createElement("script");
       script.src = "https://www.chatbase.co/embed.min.js";
@@ -825,10 +762,65 @@ export default {
       script.domain = "www.chatbase.co";
       script.defer = true;
       
+      // Apply styles after script loads
+      script.onload = () => {
+        setTimeout(() => {
+          this.applyChatbaseStyles();
+        }, 1000);
+      };
+      
       // Add to head instead of body for better performance
       document.head.appendChild(script);
       
       console.log('Chatbase GPT widget initialized');
+    },
+    addChatbaseStyles: function() {
+      // Add global CSS styles that will override Chatbase defaults
+      const style = document.createElement('style');
+      style.textContent = `
+        #chatbase-bubble-button {
+          background: linear-gradient(135deg, #8E4EC6, #9d4edd) !important;
+          border: 2px solid #7b2cbf !important;
+          box-shadow: 0 8px 20px rgba(123, 44, 191, 0.4) !important;
+          transition: all 0.3s ease !important;
+        }
+        
+        #chatbase-bubble-button:hover {
+          background: linear-gradient(135deg, #7b2cbf, #8E4EC6) !important;
+          transform: scale(1.05) !important;
+          box-shadow: 0 12px 24px rgba(123, 44, 191, 0.5) !important;
+        }
+      `;
+      document.head.appendChild(style);
+    },
+    applyChatbaseStyles: function() {
+      // Apply styles directly to the chatbase button
+      const chatbaseButton = document.getElementById('chatbase-bubble-button');
+      if (chatbaseButton) {
+        chatbaseButton.style.background = 'linear-gradient(135deg, #8E4EC6, #9d4edd)';
+        chatbaseButton.style.border = '2px solid #7b2cbf';
+        chatbaseButton.style.boxShadow = '0 8px 20px rgba(123, 44, 191, 0.4)';
+        chatbaseButton.style.transition = 'all 0.3s ease';
+        
+        // Add hover effect
+        chatbaseButton.addEventListener('mouseenter', () => {
+          chatbaseButton.style.background = 'linear-gradient(135deg, #7b2cbf, #8E4EC6)';
+          chatbaseButton.style.transform = 'scale(1.05)';
+          chatbaseButton.style.boxShadow = '0 12px 24px rgba(123, 44, 191, 0.5)';
+        });
+        
+        chatbaseButton.addEventListener('mouseleave', () => {
+          chatbaseButton.style.background = 'linear-gradient(135deg, #8E4EC6, #9d4edd)';
+          chatbaseButton.style.transform = 'scale(1)';
+          chatbaseButton.style.boxShadow = '0 8px 20px rgba(123, 44, 191, 0.4)';
+        });
+        
+      } else {
+        // Try again after a delay
+        setTimeout(() => {
+          this.applyChatbaseStyles();
+        }, 2000);
+      }
     },
     getOrganName: function(className, index) {
       const organNames = {
@@ -1135,72 +1127,6 @@ export default {
   }
 }
 
-:deep(.funding-popover.el-popover.el-popper) {
-  padding: 20px;
-  background: #fff!important;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-}
-
-.funding-content {
-  .funding-title {
-    margin: 0 0 16px 0;
-    color: #333;
-    font-size: 18px;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .funding-links {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .funding-item {
-    display: flex;
-    justify-content: center;
-  }
-
-  .funding-button {
-    display: inline-block;
-    color: white;
-    padding: 12px 20px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    min-width: 200px;
-    
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      text-decoration: none;
-      color: white;
-    }
-    
-    &.subscription-button {
-      background-color: #003366;
-      
-      &:hover {
-        background-color: #004488;
-      }
-    }
-    
-    &.support-button {
-      background-color: #0B3D91;
-      
-      &:hover {
-        background-color: #0D4BA3;
-      }
-    }
-  }
-}
-
 .pdb-viewer-overlay {
   position: fixed;
   top: 0;
@@ -1264,6 +1190,32 @@ export default {
   height: 100%;
   border: none;
   flex: 1;
+}
+
+// Chatbase GPT Widget Styling - SPARC Purple Theme
+// Target the actual chatbase button and elements that get injected
+:deep(#chatbase-bubble-button) {
+  background-color: #8E4EC6 !important;
+  background: linear-gradient(135deg, #8E4EC6, #9d4edd) !important;
+  border: 2px solid #7b2cbf !important;
+  box-shadow: 0 8px 20px rgba(123, 44, 191, 0.4) !important;
+  
+  &:hover {
+    background: linear-gradient(135deg, #7b2cbf, #8E4EC6) !important;
+    transform: scale(1.05) !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 12px 24px rgba(123, 44, 191, 0.5) !important;
+  }
+}
+
+
+
+// Additional global styles to ensure SPARC purple theme
+#chatbase-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
 }
 
 </style>
