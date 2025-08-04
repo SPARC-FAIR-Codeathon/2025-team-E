@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Molecular Structure Viewer with Distance Measurements</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 350px;
+            background-color: #2a2a2a;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #3a3a3a;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-350px);
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 60px;
+            background-color: #3a3a3a;
+            border: 1px solid #4a4a4a;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: left 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-toggle.collapsed {
+            left: 0;
+        }
+
+        .sidebar-toggle:not(.collapsed) {
+            left: 350px;
+        }
+
+        .sidebar-toggle:hover {
+            background-color: #4a4a4a;
+        }
+
+        .viewer-container {
+            flex: 1;
+            position: relative;
+            background-color: #000000;
+            transition: margin-left 0.3s ease;
+        }
+
+        .viewer-container.expanded {
+            margin-left: 0;
+        }
+
+        #molviewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #333333;
+            border-radius: 8px;
+        }
+
+        .control-group h3 {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #aaaaaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 10px 15px;
+            background-color: #4a4a4a;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+            font-size: 13px;
+        }
+
+        .file-input-label:hover {
+            background-color: #5a5a5a;
+        }
+
+        .structure-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #3a3a3a;
+            border-radius: 6px;
+            border: 1px solid #4a4a4a;
+        }
+
+        .structure-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .structure-name {
+            font-weight: 500;
+            font-size: 14px;
+            flex: 1;
+            margin-right: 10px;
+            word-break: break-word;
+        }
+
+        .structure-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .mini-btn {
+            padding: 4px 8px;
+            background-color: #4a4a4a;
+            border: 1px solid #5a5a5a;
+            border-radius: 3px;
+            color: white;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .mini-btn:hover {
+            background-color: #5a5a5a;
+        }
+
+        .mini-btn.active {
+            background-color: #2c5aa0;
+            border-color: #3a6ab4;
+        }
+
+        .visibility-btn {
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .center-btn {
+            background-color: #5a5a5a;
+        }
+
+        .center-btn:hover {
+            background-color: #6a6a6a;
+        }
+
+        .delete-btn {
+            background-color: #8a3a3a;
+            border-color: #9a4a4a;
+        }
+
+        .delete-btn:hover {
+            background-color: #9a4a4a;
+        }
+
+        .object-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .object-item {
+            padding: 8px;
+            background-color: #2a2a2a;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .object-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .object-name {
+            font-weight: 500;
+            color: #cccccc;
+            flex: 1;
+        }
+
+        .object-options {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .style-btn {
+            padding: 2px 6px;
+            font-size: 10px;
+            background-color: #4a4a4a;
+            border: 1px solid #5a5a5a;
+            border-radius: 3px;
+            color: #cccccc;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .style-btn:hover {
+            background-color: #5a5a5a;
+        }
+
+        .style-btn.active {
+            background-color: #2c5aa0;
+            border-color: #3a6ab4;
+            color: white;
+        }
+
+        .color-picker {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #5a5a5a;
+            border-radius: 3px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .distance-controls {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #3a3a3a;
+        }
+
+        .distance-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .distance-input-group label {
+            font-size: 12px;
+            color: #cccccc;
+            min-width: 80px;
+        }
+
+        .distance-input-group input {
+            flex: 1;
+            padding: 6px;
+            background-color: #4a4a4a;
+            border: 1px solid #5a5a5a;
+            border-radius: 4px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .distance-input-group input[type="number"] {
+            width: 80px;
+        }
+
+        .distance-list {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .distance-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: #3a3a3a;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .distance-info {
+            flex: 1;
+        }
+
+        .toggle-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4a4a4a;
+            border: 1px solid #5a5a5a;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .toggle-btn:hover {
+            background-color: #5a5a5a;
+        }
+
+        .toggle-btn.active {
+            background-color: #2c5aa0;
+            border-color: #3a6ab4;
+        }
+
+        .info-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(42, 42, 42, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            max-width: 350px;
+        }
+
+        .info-panel h4 {
+            margin-bottom: 8px;
+            color: #aaaaaa;
+        }
+
+        .info-panel p {
+            margin-bottom: 4px;
+            color: #cccccc;
+        }
+
+        /* Scrollbar styling */
+        .sidebar::-webkit-scrollbar,
+        .distance-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track,
+        .distance-list::-webkit-scrollbar-track {
+            background: #2a2a2a;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb,
+        .distance-list::-webkit-scrollbar-thumb {
+            background: #4a4a4a;
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover,
+        .distance-list::-webkit-scrollbar-thumb:hover {
+            background: #5a5a5a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <h2 style="margin-bottom: 20px; font-size: 20px;">Structure Viewer</h2>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <h3>Load Structures</h3>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="pdbFile" accept=".pdb,.cif" multiple>
+                        <label for="pdbFile" class="file-input-label">
+                            Add Structure(s) from File
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Loaded Structures</h3>
+                    <div id="structureList">
+                        <p style="color: #666; font-size: 12px; text-align: center;">No structures loaded</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Distance Measurements</h3>
+                    <div class="distance-controls">
+                        <div class="distance-input-group">
+                            <label>Cutoff (Å):</label>
+                            <input type="number" id="distanceCutoff" value="3.0" min="0.1" max="10" step="0.1">
+                        </div>
+                        <div class="distance-input-group">
+                            <label>Color:</label>
+                            <input type="color" id="distanceColor" value="#00ff00">
+                        </div>
+                        <button class="toggle-btn" id="calculateDistances">Calculate Distances</button>
+                        <button class="toggle-btn" id="clearDistances">Clear All Distances</button>
+                        <div class="distance-list" id="distanceList"></div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Global Controls</h3>
+                    <button class="toggle-btn" id="resetView">Reset View</button>
+                    <button class="toggle-btn" id="hideAllStructures">Hide All</button>
+                    <button class="toggle-btn" id="showAllStructures">Show All</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">
+            <span id="toggleIcon">◀</span>
+        </button>
+
+        <div class="viewer-container" id="viewerContainer">
+            <div id="molviewer"></div>
+            <div class="info-panel" id="infoPanel" style="display: none;">
+                <h4>Structure Information</h4>
+                <p id="structureCount"></p>
+                <p id="totalAtoms"></p>
+                <p id="visibleStructures"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://3dmol.org/build/3Dmol-min.js"></script>
+    <script>
+        // Global variables
+        let viewer = null;
+        let structures = new Map();
+        let structureCounter = 0;
+        let distanceMeasurements = [];
+        let sidebarCollapsed = false;
+
+        // Color presets
+        const colorPresets = [
+            '#708090', '#FFD700', '#FF6347', '#00CED1', '#9370DB',
+            '#32CD32', '#FF69B4', '#4682B4', '#DAA520', '#DC143C'
+        ];
+
+        // Initialize viewer
+        function initViewer() {
+            const element = document.getElementById('molviewer');
+            const config = { backgroundColor: 'black' };
+            viewer = $3Dmol.createViewer(element, config);
+            viewer.setViewStyle({ style: 'outline', color: 'black', width: 0.01 });
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            sidebarCollapsed = !sidebarCollapsed;
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const container = document.getElementById('viewerContainer');
+            const icon = document.getElementById('toggleIcon');
+            
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                toggle.classList.add('collapsed');
+                container.classList.add('expanded');
+                icon.textContent = '▶';
+            } else {
+                sidebar.classList.remove('collapsed');
+                toggle.classList.remove('collapsed');
+                container.classList.remove('expanded');
+                icon.textContent = '◀';
+            }
+            
+            // Resize viewer after transition
+            setTimeout(() => {
+                viewer.resize();
+            }, 300);
+        }
+
+        // Structure class
+        class Structure {
+            constructor(id, name, data) {
+                this.id = id;
+                this.name = name;
+                this.data = data;
+                this.model = null;
+                this.visible = true;
+                this.objects = new Map();
+                this.color = colorPresets[id % colorPresets.length];
+            }
+
+            parseChains() {
+                const atoms = this.model.atoms;
+                const chains = {};
+                
+                atoms.forEach(atom => {
+                    const chain = atom.chain || 'X';
+                    if (!chains[chain]) {
+                        chains[chain] = {
+                            name: `Chain ${chain}`,
+                            atoms: [],
+                            visible: true,
+                            style: 'cartoon',
+                            color: this.color
+                        };
+                    }
+                    chains[chain].atoms.push(atom);
+                });
+
+                // Detect ligands
+                Object.entries(chains).forEach(([chainId, chainData]) => {
+                    const residues = new Set(chainData.atoms.map(a => a.resn));
+                    const isProtein = Array.from(residues).some(r => 
+                        ['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLN', 'GLU', 'GLY', 'HIS', 
+                         'ILE', 'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 
+                         'TYR', 'VAL'].includes(r)
+                    );
+                    
+                    if (!isProtein && chainData.atoms.length < 200) {
+                        chainData.style = 'stick';
+                        chainData.name = `Ligand ${chainId}`;
+                    }
+                });
+
+                Object.entries(chains).forEach(([chainId, chainData]) => {
+                    this.objects.set(chainId, chainData);
+                });
+            }
+
+            updateDisplay() {
+                if (!this.model) return;
+
+                viewer.setStyle({model: this.model}, {});
+
+                if (this.visible) {
+                    this.objects.forEach((objData, chainId) => {
+                        if (objData.visible) {
+                            const style = this.getStyleObject(objData.style, objData.color);
+                            viewer.setStyle(
+                                {model: this.model, chain: chainId},
+                                style
+                            );
+                        }
+                    });
+                }
+
+                viewer.render();
+            }
+
+            getStyleObject(styleName, color) {
+                const colorHex = color.startsWith('#') ? color : `#${color}`;
+                const colorInt = parseInt(colorHex.replace('#', ''), 16);
+
+                switch(styleName) {
+                    case 'cartoon':
+                        return {cartoon: {color: colorInt}};
+                    case 'stick':
+                        return {stick: {colorscheme: 'default'}};
+                    case 'surface':
+                        return {surface: {color: colorInt, opacity: 0.7}};
+                    case 'sphere':
+                        return {sphere: {color: colorInt}};
+                    case 'line':
+                        return {line: {color: colorInt}};
+                    default:
+                        return {cartoon: {color: colorInt}};
+                }
+            }
+
+            centerOnChain(chainId) {
+                const atoms = this.objects.get(chainId)?.atoms;
+                if (atoms && atoms.length > 0) {
+                    viewer.zoomTo({model: this.model, chain: chainId});
+                    viewer.center({model: this.model, chain: chainId});
+                    viewer.render();
+                }
+            }
+        }
+
+        // Calculate distances between objects
+        function calculateDistances() {
+            clearDistances();
+            
+            const cutoff = parseFloat(document.getElementById('distanceCutoff').value);
+            const color = document.getElementById('distanceColor').value;
+            const distanceList = document.getElementById('distanceList');
+            distanceList.innerHTML = '';
+
+            const allObjects = [];
+            structures.forEach(structure => {
+                if (structure.visible) {
+                    structure.objects.forEach((objData, chainId) => {
+                        if (objData.visible && objData.atoms.length > 0) {
+                            allObjects.push({
+                                structure: structure,
+                                chainId: chainId,
+                                atoms: objData.atoms,
+                                name: `${structure.name} - ${objData.name}`
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Calculate distances between all pairs
+            for (let i = 0; i < allObjects.length; i++) {
+                for (let j = i + 1; j < allObjects.length; j++) {
+                    const obj1 = allObjects[i];
+                    const obj2 = allObjects[j];
+                    
+                    const contacts = findContacts(obj1.atoms, obj2.atoms, cutoff);
+                    
+                    if (contacts.length > 0) {
+                        // Add distance measurements to viewer
+                        contacts.forEach(contact => {
+                            const label = viewer.addLabel(
+                                `${contact.distance.toFixed(2)} Å`,
+                                {
+                                    position: contact.midpoint,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                    backgroundOpacity: 0.7,
+                                    fontColor: 'white',
+                                    fontSize: 10
+                                }
+                            );
+                            
+                            viewer.addCylinder({
+                                start: contact.atom1.coord,
+                                end: contact.atom2.coord,
+                                radius: 0.1,
+                                color: color,
+                                dashed: true,
+                                dashLength: 0.25,
+                                gapLength: 0.25
+                            });
+                            
+                            distanceMeasurements.push({label, contact});
+                        });
+
+                        // Add to distance list UI
+                        const distanceItem = document.createElement('div');
+                        distanceItem.className = 'distance-item';
+                        distanceItem.innerHTML = `
+                            <div class="distance-info">
+                                <strong>${obj1.name} ↔ ${obj2.name}</strong><br>
+                                ${contacts.length} contact${contacts.length > 1 ? 's' : ''} found
+                            </div>
+                        `;
+                        distanceList.appendChild(distanceItem);
+                    }
+                }
+            }
+
+            if (distanceMeasurements.length === 0) {
+                distanceList.innerHTML = '<p style="color: #666; text-align: center; font-size: 12px;">No contacts found within cutoff</p>';
+            }
+
+            viewer.render();
+        }
+
+        // Find contacts between two sets of atoms
+        function findContacts(atoms1, atoms2, cutoff) {
+            const contacts = [];
+            const cutoffSq = cutoff * cutoff;
+
+            for (const atom1 of atoms1) {
+                for (const atom2 of atoms2) {
+                    const dx = atom1.x - atom2.x;
+                    const dy = atom1.y - atom2.y;
+                    const dz = atom1.z - atom2.z;
+                    const distSq = dx * dx + dy * dy + dz * dz;
+                    
+                    if (distSq <= cutoffSq) {
+                        const distance = Math.sqrt(distSq);
+                        contacts.push({
+                            atom1: atom1,
+                            atom2: atom2,
+                            distance: distance,
+                            midpoint: {
+                                x: (atom1.x + atom2.x) / 2,
+                                y: (atom1.y + atom2.y) / 2,
+                                z: (atom1.z + atom2.z) / 2
+                            }
+                        });
+                    }
+                }
+            }
+
+            return contacts;
+        }
+
+        // Clear all distance measurements
+        function clearDistances() {
+            distanceMeasurements.forEach(measurement => {
+                viewer.removeLabel(measurement.label);
+            });
+            distanceMeasurements = [];
+            
+            // Remove all cylinders
+            viewer.removeAllShapes();
+            
+            // Re-render to apply changes
+            viewer.render();
+            
+            document.getElementById('distanceList').innerHTML = '';
+        }
+
+        // Load structure from file
+        async function loadStructureFile(file) {
+            const reader = new FileReader();
+            
+            return new Promise((resolve, reject) => {
+                reader.onload = function(e) {
+                    const pdbData = e.target.result;
+                    const structure = addStructure(file.name, pdbData);
+                    resolve(structure);
+                };
+                
+                reader.onerror = reject;
+                reader.readAsText(file);
+            });
+        }
+
+        // Add structure to viewer
+        function addStructure(name, data) {
+            if (!viewer) initViewer();
+
+            const id = structureCounter++;
+            const structure = new Structure(id, name, data);
+            
+            structure.model = viewer.addModel(data, 'pdb');
+            structure.parseChains();
+            structures.set(id, structure);
+
+            updateStructureList();
+            structure.updateDisplay();
+            updateInfoPanel();
+
+            if (structures.size === 1) {
+                viewer.zoomTo();
+            }
+
+            return structure;
+        }
+
+        // Update structure list UI
+        function updateStructureList() {
+            const listContainer = document.getElementById('structureList');
+            listContainer.innerHTML = '';
+
+            structures.forEach((structure, id) => {
+                const structureEl = createStructureElement(structure);
+                listContainer.appendChild(structureEl);
+            });
+
+            if (structures.size === 0) {
+                listContainer.innerHTML = '<p style="color: #666; font-size: 12px; text-align: center;">No structures loaded</p>';
+            }
+        }
+
+        // Create structure element UI
+        function createStructureElement(structure) {
+            const div = document.createElement('div');
+            div.className = 'structure-item';
+            div.id = `structure-${structure.id}`;
+
+            const header = document.createElement('div');
+            header.className = 'structure-header';
+
+            const name = document.createElement('div');
+            name.className = 'structure-name';
+            name.textContent = structure.name;
+
+            const controls = document.createElement('div');
+            controls.className = 'structure-controls';
+
+            const colorPicker = document.createElement('input');
+            colorPicker.type = 'color';
+            colorPicker.className = 'color-picker';
+            colorPicker.value = structure.color;
+            colorPicker.title = 'Change structure color';
+            colorPicker.addEventListener('change', (e) => {
+                structure.color = e.target.value;
+                structure.objects.forEach(obj => {
+                    obj.color = e.target.value;
+                });
+                structure.updateDisplay();
+            });
+
+            const visBtn = document.createElement('button');
+            visBtn.className = `mini-btn visibility-btn ${structure.visible ? 'active' : ''}`;
+            visBtn.innerHTML = structure.visible ? '👁' : '👁‍🗨';
+            visBtn.title = 'Toggle visibility';
+            visBtn.addEventListener('click', () => {
+                structure.visible = !structure.visible;
+                visBtn.classList.toggle('active');
+                visBtn.innerHTML = structure.visible ? '👁' : '👁‍🗨';
+                structure.updateDisplay();
+                updateInfoPanel();
+            });
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'mini-btn delete-btn';
+            delBtn.textContent = '✕';
+            delBtn.title = 'Remove structure';
+            delBtn.addEventListener('click', () => {
+                removeStructure(structure.id);
+            });
+
+            controls.appendChild(colorPicker);
+            controls.appendChild(visBtn);
+            controls.appendChild(delBtn);
+
+            header.appendChild(name);
+            header.appendChild(controls);
+
+            const objControls = document.createElement('div');
+            objControls.className = 'object-controls';
+
+            structure.objects.forEach((objData, chainId) => {
+                const objEl = createObjectElement(structure, chainId, objData);
+                objControls.appendChild(objEl);
+            });
+
+            div.appendChild(header);
+            div.appendChild(objControls);
+
+            return div;
+        }
+
+        // Create object/chain element UI
+        function createObjectElement(structure, chainId, objData) {
+            const div = document.createElement('div');
+            div.className = 'object-item';
+
+            const header = document.createElement('div');
+            header.className = 'object-header';
+
+            const name = document.createElement('div');
+            name.className = 'object-name';
+            name.textContent = objData.name;
+
+            const controls = document.createElement('div');
+            controls.style.display = 'flex';
+            controls.style.gap = '3px';
+
+            const centerBtn = document.createElement('button');
+            centerBtn.className = 'mini-btn center-btn';
+            centerBtn.innerHTML = '⊕';
+            centerBtn.style.width = '20px';
+            centerBtn.style.height = '20px';
+            centerBtn.style.fontSize = '12px';
+            centerBtn.title = 'Center view';
+            centerBtn.addEventListener('click', () => {
+                structure.centerOnChain(chainId);
+            });
+
+            const visBtn = document.createElement('button');
+            visBtn.className = `mini-btn visibility-btn ${objData.visible ? 'active' : ''}`;
+            visBtn.innerHTML = objData.visible ? '👁' : '👁‍🗨';
+            visBtn.style.width = '20px';
+            visBtn.style.height = '20px';
+            visBtn.style.fontSize = '10px';
+            visBtn.addEventListener('click', () => {
+                objData.visible = !objData.visible;
+                visBtn.classList.toggle('active');
+                visBtn.innerHTML = objData.visible ? '👁' : '👁‍🗨';
+                structure.updateDisplay();
+            });
+
+            controls.appendChild(centerBtn);
+            controls.appendChild(visBtn);
+
+            header.appendChild(name);
+            header.appendChild(controls);
+
+            const options = document.createElement('div');
+            options.className = 'object-options';
+
+            const styles = objData.style === 'stick' ? 
+                ['stick', 'sphere', 'line'] : 
+                ['cartoon', 'surface', 'stick'];
+
+            styles.forEach(style => {
+                const styleBtn = document.createElement('button');
+                styleBtn.className = `style-btn ${objData.style === style ? 'active' : ''}`;
+                styleBtn.textContent = style.charAt(0).toUpperCase();
+                styleBtn.title = style;
+                styleBtn.addEventListener('click', () => {
+                    objData.style = style;
+                    options.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                    styleBtn.classList.add('active');
+                    structure.updateDisplay();
+                });
+                options.appendChild(styleBtn);
+            });
+
+            div.appendChild(header);
+            div.appendChild(options);
+
+            return div;
+        }
+
+        // Remove structure
+        function removeStructure(id) {
+            const structure = structures.get(id);
+            if (structure && structure.model) {
+                viewer.removeModel(structure.model);
+                structures.delete(id);
+                updateStructureList();
+                updateInfoPanel();
+                clearDistances();
+                viewer.render();
+            }
+        }
+
+        // Update info panel
+        function updateInfoPanel() {
+            const visibleCount = Array.from(structures.values()).filter(s => s.visible).length;
+            const totalAtoms = Array.from(structures.values()).reduce((sum, s) => 
+                sum + (s.model ? s.model.atoms.length : 0), 0
+            );
+
+            document.getElementById('structureCount').textContent = 
+                `Structures: ${structures.size} loaded`;
+            document.getElementById('totalAtoms').textContent = 
+                `Total atoms: ${totalAtoms.toLocaleString()}`;
+            document.getElementById('visibleStructures').textContent = 
+                `Visible: ${visibleCount} structure${visibleCount !== 1 ? 's' : ''}`;
+
+            document.getElementById('infoPanel').style.display = 
+                structures.size > 0 ? 'block' : 'none';
+        }
+
+        // Event listeners
+        document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+
+        document.getElementById('pdbFile').addEventListener('change', async function(e) {
+            const files = Array.from(e.target.files);
+            for (const file of files) {
+                await loadStructureFile(file);
+            }
+            viewer.zoomTo();
+        });
+
+        document.getElementById('calculateDistances').addEventListener('click', calculateDistances);
+        document.getElementById('clearDistances').addEventListener('click', clearDistances);
+
+        document.getElementById('hideAllStructures').addEventListener('click', () => {
+            structures.forEach(structure => {
+                structure.visible = false;
+                structure.updateDisplay();
+            });
+            updateStructureList();
+            updateInfoPanel();
+        });
+
+        document.getElementById('showAllStructures').addEventListener('click', () => {
+            structures.forEach(structure => {
+                structure.visible = true;
+                structure.updateDisplay();
+            });
+            updateStructureList();
+            updateInfoPanel();
+        });
+
+        document.getElementById('resetView').addEventListener('click', () => {
+            viewer.zoomTo();
+            viewer.render();
+        });
+
+        // Drag and drop
+        const viewerContainer = document.querySelector('.viewer-container');
+        
+        viewerContainer.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        viewerContainer.addEventListener('drop', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const files = Array.from(e.dataTransfer.files).filter(f => 
+                f.name.match(/\.(pdb|cif)$/i)
+            );
+            
+            for (const file of files) {
+                await loadStructureFile(file);
+            }
+            
+            if (files.length > 0) {
+                viewer.zoomTo();
+            }
+        });
+
+        // Initialize viewer on load
+        window.addEventListener('load', initViewer);
+    </script>
+</body>
+</html>

@@ -36,6 +36,13 @@
         </el-button>
         
         <el-button 
+          @click="togglePdbViewer"
+          :type="showPdbViewer ? 'primary' : 'default'"
+        >
+          {{ showPdbViewer ? '❌ Hide Viewer' : '🧬 Molecular Viewer' }}
+        </el-button>
+        
+        <el-button 
           @click="clearHealthDataFromStorage"
           type="warning"
           size="small"
@@ -196,6 +203,32 @@
       </template>
     </el-dialog>
 
+    <!-- PDB Molecular Viewer in Dialog -->
+    <el-dialog
+      v-model="showPdbViewer"
+      title="🧬 Molecular Structure Viewer"
+      width="95%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="true"
+      append-to-body
+      class="pdb-viewer-dialog"
+    >
+      <div class="pdb-viewer-container">
+        <iframe 
+          :src="pdbViewerUrl"
+          frameborder="0"
+          class="pdb-viewer-iframe"
+          title="Molecular Structure Viewer"
+        ></iframe>
+      </div>
+      
+      <template #footer>
+        <el-button @click="showPdbViewer = false" type="info">
+          ✕ Close Molecular Viewer
+        </el-button>
+      </template>
+    </el-dialog>
+
     <!-- Toxin Sidebar (always rendered so tab is always visible) -->
     <ToxinSidebar
       @close="closeToxinSidebar"
@@ -219,14 +252,12 @@
 
 <script>
 /* eslint-disable no-alert, no-console */
-import Tagging from '../../services/tagging.js';
 import ContentMixin from "../../mixins/ContentMixin";
 import EventBus from "../EventBus";
 import {
   capitalise,
   availableSpecies,
-  getBodyScaffoldInfo,
-  transformObjToString
+  getBodyScaffoldInfo
 } from "../scripts/utilities";
 import DyncamicMarkerMixin from "../../mixins/DynamicMarkerMixin";
 
@@ -281,6 +312,7 @@ export default {
       showQuiz: false,
       showToxinSidebar: false,
       showDetoxPlan: false,
+      showPdbViewer: false,
       fundingPopupVisible: false,
       // Health percentages for each organ (constants for now)
       organHealthData: {
@@ -328,35 +360,19 @@ export default {
       return null;
     },
     flatmaprResourceSelected: function (type, resource) {
-    
       if (resource.eventType === 'click' && resource.feature.type === 'feature') {
-        const eventData = {
+        console.log('Flatmap resource selected:', {
           label: resource.label || '',
           id: resource.feature.id || '',
           featureId: resource.feature.featureId || '',
           taxonomy: resource.taxonomy || '',
           resources: resource.resource.join(', ')
-        };
-        const paramString = transformObjToString(eventData);
-        // `transformStringToObj` function can be used to change it back to object
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': 'portal_maps_connectivity',
-          'category': paramString,
-          "location": type + ' ' + map.viewingMode
         });
       }
     },
     onPathwaySelectionChanged: function (data) {
       const { label, property, checked, selectionsTitle } = data;
-      // GA Tagging
-      // Event tracking for maps' pathway selection change
-      Tagging.sendEvent({
-        'event': 'interaction_event',
-        'event_name': 'portal_maps_pathway_change',
-        'category': label + ' [' + property + '] ' + checked,
-        'location': selectionsTitle
-      });
+      console.log('Pathway selection changed:', { label, property, checked, selectionsTitle });
     },
     onSidebarAnnotationClose: function() {
       if (this.flatmapReady) {
@@ -364,14 +380,7 @@ export default {
       }
     },
     onOpenPubmedUrl: function (url) {
-      // GA Tagging
-      // Event tracking for open pubmed url from popup
-      Tagging.sendEvent({
-        'event': 'interaction_event',
-        'event_name': 'portal_maps_pubmed_url',
-        'file_path': url,
-        'location': 'map_popup_button',
-      });
+      console.log('Opening PubMed URL:', url);
     },
     displayTooltip: function (info) {
       if (info) {
@@ -597,74 +606,55 @@ export default {
         health: healthPercentage,
         timestamp: new Date().toISOString()
       });
+    },
+    // Centralized popup toggle handler
+    togglePopup: function(popupType) {
+      // First, close all popups
+      this.closeAllPopups();
       
-      // Optional: Track analytics for health clicks
-      if (Tagging && Tagging.sendEvent) {
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': 'portal_health_percentage_click',
-          'category': `${organClass}_${healthPercentage}%`,
-          'location': 'health_overlay'
-        });
+      // Then toggle the requested popup
+      switch(popupType) {
+        case 'quiz':
+          this.showQuiz = !this.showQuiz;
+          break;
+        case 'detoxPlan':
+          this.showDetoxPlan = !this.showDetoxPlan;
+          break;
+        case 'pdbViewer':
+          this.showPdbViewer = !this.showPdbViewer;
+          break;
+        case 'toxinSidebar':
+          this.showToxinSidebar = !this.showToxinSidebar;
+          break;
+        case 'fundingPopup':
+          this.fundingPopupVisible = !this.fundingPopupVisible;
+          break;
+        default:
+          console.warn(`Unknown popup type: ${popupType}`);
       }
     },
+    
+    // Helper function to close all popups
+    closeAllPopups: function() {
+      this.showQuiz = false;
+      this.showDetoxPlan = false;
+      this.showPdbViewer = false;
+      this.showToxinSidebar = false;
+      this.fundingPopupVisible = false;
+    },
+    
+    // Individual toggle methods for template binding
     toggleQuiz: function() {
-      this.showQuiz = !this.showQuiz;
-      
-      // Close funding popup and toxin sidebar if quiz is being opened
-      if (this.showQuiz) {
-        this.fundingPopupVisible = false;
-        this.showToxinSidebar = false;
-      }
-      
-      // Track quiz dialog opening/closing
-      if (Tagging && Tagging.sendEvent) {
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': this.showQuiz ? 'portal_health_quiz_opened' : 'portal_health_quiz_closed',
-          'category': 'health_assessment_dialog',
-          'location': 'quiz_toggle_button'
-        });
-      }
+      this.togglePopup('quiz');
     },
     toggleToxinSidebar: function() {
-      this.showToxinSidebar = !this.showToxinSidebar;
-      
-      // Close quiz and funding popup if toxin sidebar is being opened
-      if (this.showToxinSidebar) {
-        this.showQuiz = false;
-        this.fundingPopupVisible = false;
-      }
-      
-      // Track toxin sidebar opening/closing
-      if (Tagging && Tagging.sendEvent) {
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': this.showToxinSidebar ? 'portal_toxin_sidebar_opened' : 'portal_toxin_sidebar_closed',
-          'category': 'toxin_database',
-          'location': 'toxin_sidebar_toggle_button'
-        });
-      }
+      this.togglePopup('toxinSidebar');
     },
     toggleDetoxPlan: function() {
-      this.showDetoxPlan = !this.showDetoxPlan;
-      
-      // Close quiz and funding popup if detox plan is being opened
-      if (this.showDetoxPlan) {
-        this.showQuiz = false;
-        this.fundingPopupVisible = false;
-        this.showToxinSidebar = false; // Close sidebar if open
-      }
-      
-      // Track detox plan opening/closing
-      if (Tagging && Tagging.sendEvent) {
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': this.showDetoxPlan ? 'portal_detox_plan_opened' : 'portal_detox_plan_closed',
-          'category': 'toxin_database',
-          'location': 'detox_plan_toggle_button'
-        });
-      }
+      this.togglePopup('detoxPlan');
+    },
+    togglePdbViewer: function() {
+      this.togglePopup('pdbViewer');
     },
     closeToxinSidebar: function() {
       this.showToxinSidebar = false;
@@ -672,55 +662,17 @@ export default {
     onToxinSelected: function(selectedToxins) {
       // Handle toxin selection from sidebar
       console.log('Toxins selected:', selectedToxins);
-      
-      // Track toxin selection
-      if (Tagging && Tagging.sendEvent) {
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': 'portal_toxins_selected',
-          'category': 'toxin_database',
-          'location': 'toxin_sidebar',
-          'selected_toxins': selectedToxins.join(', ')
-        });
-      }
     },
     onToxinsSelected: function(selectedToxins) {
       // Handle toxin selection from MyDetoxPlan component
       console.log('Toxins selected from detox plan:', selectedToxins);
-      
-      // Track toxin selection from detox plan
-      if (Tagging && Tagging.sendEvent) {
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': 'portal_toxins_selected_detox_plan',
-          'category': 'toxin_database', 
-          'location': 'detox_plan_dialog',
-          'selected_toxins': selectedToxins.join(', ')
-        });
-      }
     },
     onViewToxinDetails: function(toxin) {
       // Handle viewing toxin details (could open MyDetoxPlan component)
       console.log('View toxin details:', toxin);
-      
-      // Track toxin details view
-      if (Tagging && Tagging.sendEvent) {
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': 'portal_toxin_details_viewed',
-          'category': 'toxin_database',
-          'location': 'toxin_sidebar',
-          'toxin_name': toxin.name
-        });
-      }
     },
     toggleFundingPopup: function() {
-      this.fundingPopupVisible = !this.fundingPopupVisible;
-      // Close quiz and toxin sidebar when opening funding popup for better UX
-      if (this.fundingPopupVisible) {
-        this.showQuiz = false;
-        this.showToxinSidebar = false;
-      }
+      this.togglePopup('fundingPopup');
     },
     onHealthDataUpdated: function(healthData) {
       // Update organ health data with quiz results
@@ -758,16 +710,6 @@ export default {
     },
     onQuizCompleted: function(quizData) {
       console.log('Quiz completed:', quizData);
-      
-      // Optional: Track quiz completion
-      if (Tagging && Tagging.sendEvent) {
-        Tagging.sendEvent({
-          'event': 'interaction_event',
-          'event_name': 'portal_health_quiz_completed',
-          'category': 'health_assessment',
-          'location': 'health_quiz'
-        });
-      }
       
       // Emit event for parent components
       this.$emit('quiz-completed', quizData);
@@ -886,22 +828,6 @@ export default {
     },
     onOrganClick: function(organId, organName) {
       console.log(`Clicked on ${organName} (${organId})`);
-      
-      const eventData = {
-        label: organName|| '',
-        id: "UBERON:0000948" || '',
-        featureId: "UBERON:0000948" || '',
-        taxonomy: "NCBITaxon:9606" || '',
-        resources: ""
-      };
-      const paramString = transformObjToString(eventData);
-      // `transformStringToObj` function can be used to change it back to object
-      Tagging.sendEvent({
-        'event': 'interaction_event',
-        'event_name': 'portal_maps_connectivity',
-        'category': paramString,
-        "location": ""
-      });
     },
   },
   computed: {
@@ -921,6 +847,10 @@ export default {
     },
     isSVGFile() {
       return this.selectedMapImage.toLowerCase().endsWith('.svg');
+    },
+    pdbViewerUrl() {
+      // Return the path to your PDB viewer HTML file in the public directory
+      return '/pdb_viewer.html';
     }
   },
   watch: {
@@ -1142,6 +1072,63 @@ export default {
       
       &:hover {
         background: #a8a8a8;
+      }
+    }
+  }
+  
+  .el-dialog__footer {
+    padding: 16px 24px;
+    background-color: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+  }
+}
+
+// PDB Viewer Dialog Styles
+:deep(.pdb-viewer-dialog) {
+  .el-dialog {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .el-dialog__header {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    padding: 20px 24px;
+    
+    .el-dialog__title {
+      font-size: 20px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .el-dialog__headerbtn {
+      .el-dialog__close {
+        color: white;
+        font-size: 18px;
+        
+        &:hover {
+          color: #f0f0f0;
+        }
+      }
+    }
+  }
+  
+  .el-dialog__body {
+    padding: 0;
+    height: 75vh;
+    
+    .pdb-viewer-container {
+      width: 100%;
+      height: 100%;
+      
+      .pdb-viewer-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: #1a1a1a;
       }
     }
   }
