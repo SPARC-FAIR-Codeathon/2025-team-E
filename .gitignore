@@ -1,0 +1,17 @@
+.DS_Store
+dist
+node_modules
+test_html
+.env.local
+.yalc
+yalc.lock
+results
+cypress/results/
+cypress/snapshots/
+cypress/videos/
+cypress/reports/
+test/src/
+docs/.vitepress/dist
+docs/.vitepress/cache
+docs/components
+.vitepress

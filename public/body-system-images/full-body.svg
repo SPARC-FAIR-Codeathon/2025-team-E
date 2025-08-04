@@ -1,0 +1,38 @@
+<svg viewBox="0 0 300 700" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .organ { stroke: black; stroke-width: 1; }
+    .brain { fill: pink; }
+    .heart { fill: red; }
+    .lungs { fill: lightcoral; }
+    .liver { fill: brown; }
+    .stomach { fill: orange; }
+    .intestine-small { fill: peachpuff; }
+    .intestine-large { fill: peru; }
+    .outline { fill: none; stroke: black; stroke-width: 2; }
+  </style>
+
+  <!-- Body Outline -->
+  <rect x="100" y="50" width="100" height="600" rx="50" class="outline" />
+  
+  <!-- Brain -->
+  <ellipse cx="150" cy="80" rx="30" ry="20" class="organ brain" />
+  
+  <!-- Lungs -->
+  <ellipse cx="130" cy="150" rx="20" ry="40" class="organ lungs" />
+  <ellipse cx="170" cy="150" rx="20" ry="40" class="organ lungs" />
+  
+  <!-- Heart -->
+  <path d="M145 170 Q150 160 155 170 Q160 180 150 190 Q140 180 145 170 Z" class="organ heart" />
+  
+  <!-- Liver -->
+  <ellipse cx="140" cy="230" rx="40" ry="20" class="organ liver" />
+  
+  <!-- Stomach -->
+  <ellipse cx="170" cy="260" rx="20" ry="30" class="organ stomach" />
+  
+  <!-- Small Intestine -->
+  <path d="M130 300 Q140 310 130 320 Q140 330 130 340 Q140 350 130 360" class="organ intestine-small" />
+  
+  <!-- Large Intestine -->
+  <rect x="110" y="290" width="80" height="100" rx="15" class="organ intestine-large" />
+</svg>

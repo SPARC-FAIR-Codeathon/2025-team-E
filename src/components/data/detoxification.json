@@ -1,0 +1,121 @@
+
+{
+  "toxins": [
+    {
+      "name": "BPA",
+      "detoxEvidence": {
+        "description": "Urinary BPA levels decline sharply after switching to fresh foods for 3–6 weeks",
+        "research": "Sessa et al. 2021",
+        "link": "https://www.frontiersin.org/journals/public-health/articles/10.3389/fpubh.2021.626070/full"
+      },
+      "supportedDetoxStrategies": [
+        "Infrared sauna",
+        "Exercise",
+        "Liver support (sulforaphane)",
+        "Probiotics"
+      ],
+      "naturalElimination": {
+        "pathway": "Urine (via glucuronidation)",
+        "timeframe": "50–90% in 24–72 h"
+      },
+      "lifestyleDietIntervention": [
+        "Broccoli",
+        "Cabbage",
+        "Fermented foods",
+        "Clean water"
+      ],
+      "experimentalTechniques": [
+        "Targeted sauna protocols (3x/week)",
+        "Glutathione boosting"
+      ],
+      "removalEfficiency": "~50–70% removed in 3 days with strict avoidance"
+    },
+    {
+      "name": "Phthalates",
+      "detoxEvidence": {
+        "description": "Fast urinary decline of MEHP, MBP after exposure cut; NHANES shows endocrine effects",
+        "research": "Meeker et al. 2014",
+        "link": "https://pubmed.ncbi.nlm.nih.gov/25121464/"
+      },
+      "supportedDetoxStrategies": [
+        "Activated charcoal",
+        "Fiber",
+        "Probiotics",
+        "Sauna"
+      ],
+      "naturalElimination": {
+        "pathway": "Urine (rapid metabolite excretion)",
+        "timeframe": "Rapid"
+      },
+      "lifestyleDietIntervention": [
+        "High-fiber diet",
+        "Avoid plastic contact",
+        "Fermented foods"
+      ],
+      "experimentalTechniques": [
+        "Binder protocols (bentonite clay)",
+        "Rebounding"
+      ],
+      "removalEfficiency": "70–90% drop in metabolites within 2–3 days"
+    },
+    {
+      "name": "PFAS",
+      "detoxEvidence": {
+        "description": "Very persistent; limited natural elimination. Cholestyramine shown to increase PFAS excretion in bile/feces",
+        "research": "Genuis et al. 2010",
+        "link": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2934222/"
+      },
+      "supportedDetoxStrategies": [
+        "Probiotics",
+        "Beta-glucan",
+        "Sauna",
+        "Liver enzyme boosters"
+      ],
+      "naturalElimination": {
+        "pathway": "Very slow elimination",
+        "timeframe": "Serum half-lives: PFOS ~5 yrs, PFOA ~3.8 yrs"
+      },
+      "lifestyleDietIntervention": [
+        "Oat fiber",
+        "Cruciferous vegetables",
+        "Sauna use"
+      ],
+      "experimentalTechniques": [
+        "Apheresis (experimental blood filtration)",
+        "Detox programs"
+      ],
+      "removalEfficiency": "~50–100 ng/day PFOS removed with cholestyramine"
+    },
+    {
+      "name": "Microplastics",
+      "detoxEvidence": {
+        "description": "Fecal detection studies; blood filtering (Germany); gut inflammation research",
+        "research": "Multiple studies"
+      },
+      "supportedDetoxStrategies": [
+        "Antioxidants",
+        "Probiotics",
+        "Fiber"
+      ],
+      "naturalElimination": {
+        "pathway": "Primarily feces; limited sweat",
+        "timeframe": "Variable"
+      },
+      "lifestyleDietIntervention": [
+        "High-fiber foods",
+        "Anti-inflammatory foods (berries, flax)",
+        "Avoid packaging"
+      ],
+      "experimentalTechniques": [
+        "Blood filtration (apheresis)",
+        "Gut-lining repair protocols"
+      ],
+      "removalEfficiency": "Not specified"
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2025-08-04",
+    "dataSource": "Research compilation",
+    "note": "Removal efficiency data based on available research and may vary by individual"
+  }
+}
