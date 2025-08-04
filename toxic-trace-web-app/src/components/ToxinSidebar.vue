@@ -82,274 +82,41 @@
 
         <!-- Toxin Cards (Detox Mode) -->
         <div v-if="currentMode === 'detox'" class="toxin-cards">
-          <div 
+          <ToxinCard
             v-for="toxin in filteredToxins" 
             :key="toxin.name"
-            class="toxin-card"
-            @click="selectToxin(toxin)"
-            :class="{ 'selected': selectedToxins.includes(toxin.name) }"
-          >
-            <div class="card-header">
-              <h4>{{ toxin.name }}</h4>
-              <div class="toxin-badges">
-                <el-tag 
-                  :type="getSeverityType(toxin.filters.severity)"
-                  size="small"
-                >
-                  {{ capitalizeFirst(toxin.filters.severity) }}
-                </el-tag>
-                <el-tag 
-                  :type="getDifficultyType(toxin.filters.detoxDifficulty)"
-                  size="small"
-                >
-                  {{ capitalizeFirst(toxin.filters.detoxDifficulty) }}
-                </el-tag>
-              </div>
-            </div>
-            
-            <div class="card-content">
-              <p class="toxin-description">
-                {{ toxin.detoxEvidence.description }}
-              </p>
-              
-              <div class="toxin-info">
-                <div class="info-item">
-                  <strong>Elimination:</strong> {{ toxin.filters.eliminationSpeed }}
-                </div>
-                <div class="info-item">
-                  <strong>Time Frame:</strong> {{ toxin.filters.timeToEliminate }}
-                </div>
-                <div class="info-item">
-                  <strong>Evidence:</strong> {{ toxin.filters.evidenceLevel }}
-                </div>
-              </div>
-
-              <div class="affected-systems">
-                <strong>Affected Systems:</strong>
-                <div class="system-tags">
-                  <el-tag 
-                    v-for="system in toxin.filters.affectedSystems" 
-                    :key="system"
-                    size="mini"
-                    class="system-tag"
-                  >
-                    {{ capitalizeFirst(system) }}
-                  </el-tag>
-                </div>
-              </div>
-
-              <div class="detox-methods">
-                <strong>Detox Methods:</strong>
-                <div class="method-tags">
-                  <el-tag 
-                    v-for="method in toxin.filters.detoxMethods" 
-                    :key="method"
-                    type="success"
-                    size="mini"
-                    class="method-tag"
-                  >
-                    {{ capitalizeFirst(method) }}
-                  </el-tag>
-                </div>
-              </div>
-
-              <div class="primary-sources">
-                <strong>Common Sources:</strong>
-                <span class="sources-text">
-                  {{ toxin.filters.primarySource.join(', ') }}
-                </span>
-              </div>
-            </div>
-
-            <div class="card-footer">
-              <el-button 
-                type="primary" 
-                size="small"
-                @click.stop="viewDetails(toxin)"
-              >
-                View Details
-              </el-button>
-              <el-button 
-                v-if="toxin.detoxEvidence.link"
-                type="text" 
-                size="small"
-                @click.stop="openResearch(toxin.detoxEvidence.link)"
-              >
-                Research
-              </el-button>
-            </div>
-          </div>
+            :toxin="toxin"
+            :is-selected="selectedToxins.includes(toxin.name)"
+            @select="selectToxin"
+            @view-details="viewDetails"
+            @open-research="openResearch"
+          />
         </div>
 
         <!-- Interaction Cards (Interactions Mode) -->
         <div v-if="currentMode === 'interactions'" class="interaction-cards">
-          <div 
+          <InteractionCard
             v-for="interaction in filteredInteractions" 
             :key="interaction.id"
-            class="interaction-card"
-            @click="selectInteraction(interaction)"
-            :class="{ 'selected': selectedInteractions.includes(interaction.id) }"
-          >
-            <div class="card-header">
-              <h4>{{ interaction.targetProtein }}</h4>
-              <div class="interaction-badges">
-                <el-tag 
-                  :type="getEvidenceType(interaction.evidence.level)"
-                  size="small"
-                >
-                  {{ interaction.evidence.level }}
-                </el-tag>
-                <el-tag 
-                  v-if="interaction.evidence.hasStructuralData"
-                  type="success"
-                  size="small"
-                >
-                  3D Structure
-                </el-tag>
-              </div>
-            </div>
-            
-            <div class="card-content">
-              <div class="interaction-info">
-                <div class="info-item">
-                  <strong>System:</strong> {{ interaction.system }}
-                </div>
-                <div class="info-item">
-                  <strong>Toxin:</strong> {{ interaction.toxin }}
-                </div>
-                <div class="info-item">
-                  <strong>Mechanism:</strong> {{ interaction.interaction.mechanism }}
-                </div>
-              </div>
-
-              <p class="interaction-description">
-                {{ interaction.interaction.description }}
-              </p>
-
-              <div class="structure-info" v-if="interaction.structures">
-                <div class="structure-row">
-                  <strong>Natural:</strong> 
-                  <span class="pdb-id">{{ interaction.structures.naturalLigand.pdbId }}</span>
-                  <span class="potency">({{ interaction.structures.naturalLigand.potency }})</span>
-                </div>
-                <div class="structure-row" v-if="interaction.structures.toxinComplex.pdbId">
-                  <strong>Toxin:</strong> 
-                  <span class="pdb-id">{{ interaction.structures.toxinComplex.pdbId }}</span>
-                  <span class="potency">({{ interaction.structures.toxinComplex.potency }})</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-footer">
-              <el-button 
-                type="primary" 
-                size="small"
-                @click.stop="viewInteractionDetails(interaction)"
-              >
-                View 3D Structure
-              </el-button>
-              <el-button 
-                v-if="interaction.references && interaction.references.length > 0"
-                type="text" 
-                size="small"
-                @click.stop="openResearch(interaction.references[0].url)"
-              >
-                Research
-              </el-button>
-            </div>
-          </div>
+            :interaction="interaction"
+            :is-selected="selectedInteractions.includes(interaction.id)"
+            @select="selectInteraction"
+            @view-details="viewInteractionDetails"
+            @open-research="openResearch"
+          />
         </div>
 
         <!-- Nerve Interaction Cards (Nerves Mode) -->
         <div v-if="currentMode === 'nerves'" class="nerve-interaction-cards">
-          <div 
+          <NerveInteractionCard
             v-for="interaction in filteredNerveInteractions" 
             :key="interaction.id"
-            class="nerve-interaction-card"
-            @click="selectNerveInteraction(interaction)"
-            :class="{ 'selected': selectedNerveInteractions.includes(interaction.id) }"
-          >
-            <div class="card-header">
-              <h4>{{ interaction.targetProtein }}</h4>
-              <div class="nerve-interaction-badges">
-                <el-tag 
-                  :type="getEvidenceType(interaction.evidence.level)"
-                  size="small"
-                >
-                  {{ interaction.evidence.level }}
-                </el-tag>
-                <el-tag 
-                  type="warning"
-                  size="small"
-                >
-                  {{ interaction.nerve.split(' ')[0] }}
-                </el-tag>
-              </div>
-            </div>
-            
-            <div class="card-content">
-              <div class="nerve-interaction-info">
-                <div class="info-item">
-                  <strong>Nerve:</strong> {{ interaction.nerve }}
-                </div>
-                <div class="info-item">
-                  <strong>Toxin:</strong> {{ interaction.toxin }}
-                </div>
-                <div class="info-item">
-                  <strong>System:</strong> {{ interaction.system }}
-                </div>
-                <div class="info-item">
-                  <strong>Functions:</strong> {{ interaction.keyFunctions }}
-                </div>
-              </div>
-
-              <p class="nerve-interaction-description">
-                {{ interaction.interaction.description }}
-              </p>
-
-              <div class="pathways-info" v-if="interaction.pathways && interaction.pathways.length > 0">
-                <strong>Key Pathways:</strong>
-                <ul class="pathway-list">
-                  <li v-for="(pathway, index) in interaction.pathways.slice(0, 2)" :key="index">
-                    {{ pathway }}
-                  </li>
-                </ul>
-              </div>
-
-              <div class="consequences-info" v-if="interaction.consequences && interaction.consequences.length > 0">
-                <strong>Consequences:</strong>
-                <div class="consequence-tags">
-                  <el-tag 
-                    v-for="(consequence, index) in interaction.consequences.slice(0, 3)" 
-                    :key="index"
-                    type="danger"
-                    size="mini"
-                    class="consequence-tag"
-                  >
-                    {{ consequence.split('→')[0].trim() }}
-                  </el-tag>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-footer">
-              <el-button 
-                type="primary" 
-                size="small"
-                @click.stop="viewNerveInteractionDetails(interaction)"
-              >
-                View Details
-              </el-button>
-              <el-button 
-                v-if="interaction.references && interaction.references.length > 0"
-                type="text" 
-                size="small"
-                @click.stop="openResearch(interaction.references[0].url)"
-              >
-                Research
-              </el-button>
-            </div>
-          </div>
+            :interaction="interaction"
+            :is-selected="selectedNerveInteractions.includes(interaction.id)"
+            @select="selectNerveInteraction"
+            @view-details="viewNerveInteractionDetails"
+            @open-research="openResearch"
+          />
         </div>
 
         <!-- Empty State -->
@@ -375,6 +142,9 @@ import { ref, computed } from 'vue'
 import { ElButton, ElTag, ElIcon, ElEmpty } from 'element-plus'
 import { Close, Aim, Connection, Lightning } from '@element-plus/icons-vue'
 import ToxinFilter from './ToxinFilter.vue'
+import ToxinCard from './cards/ToxinCard.vue'
+import InteractionCard from './cards/InteractionCard.vue'
+import NerveInteractionCard from './cards/NerveInteractionCard.vue'
 import detoxificationData from './data/detoxification.json'
 import molecularInteractionsData from './data/molecular-interactions.json'
 import nerveInteractionsData from './data/nerve-interactions.json'
@@ -387,6 +157,9 @@ export default {
     ElIcon,
     ElEmpty,
     ToxinFilter,
+    ToxinCard,
+    InteractionCard,
+    NerveInteractionCard,
     Close,
     Aim,
     Connection,
@@ -830,213 +603,12 @@ export default {
     }
   }
 
-  .toxin-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .interaction-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
+  .toxin-cards,
+  .interaction-cards,
   .nerve-interaction-cards {
     display: flex;
     flex-direction: column;
     gap: 16px;
-  }
-
-  .toxin-card,
-  .interaction-card,
-  .nerve-interaction-card {
-    border: 1px solid #e4e7ed;
-    border-radius: 8px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: white;
-
-    &:hover {
-      border-color: #409eff;
-      box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
-    }
-
-    &.selected {
-      border-color: #409eff;
-      background: #f0f8ff;
-      box-shadow: 0 2px 8px rgba(64, 158, 255, 0.2);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-
-      h4 {
-        margin: 0;
-        color: #303133;
-        font-size: 16px;
-        font-weight: 600;
-        flex: 1;
-        line-height: 1.3;
-      }
-
-      .toxin-badges,
-      .interaction-badges,
-      .nerve-interaction-badges {
-        display: flex;
-        gap: 4px;
-        flex-wrap: wrap;
-        margin-left: 8px;
-      }
-    }
-
-    .card-content {
-      .toxin-description,
-      .interaction-description,
-      .nerve-interaction-description {
-        font-size: 13px;
-        color: #606266;
-        margin-bottom: 12px;
-        line-height: 1.4;
-      }
-
-      .toxin-info,
-      .interaction-info,
-      .nerve-interaction-info {
-        margin-bottom: 12px;
-
-        .info-item {
-          font-size: 12px;
-          color: #606266;
-          margin-bottom: 4px;
-
-          strong {
-            color: #303133;
-          }
-        }
-      }
-
-      .pathways-info,
-      .consequences-info {
-        margin-bottom: 12px;
-
-        strong {
-          display: block;
-          font-size: 12px;
-          color: #303133;
-          margin-bottom: 6px;
-        }
-
-        .pathway-list {
-          margin: 0;
-          padding-left: 16px;
-          
-          li {
-            font-size: 11px;
-            color: #606266;
-            line-height: 1.3;
-            margin-bottom: 2px;
-          }
-        }
-
-        .consequence-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 4px;
-
-          .consequence-tag {
-            font-size: 10px;
-            max-width: 120px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-        }
-      }
-
-      .structure-info {
-        margin-bottom: 12px;
-        padding: 8px;
-        background: #f8f9fc;
-        border-radius: 4px;
-        border-left: 3px solid #409eff;
-
-        .structure-row {
-          font-size: 11px;
-          margin-bottom: 4px;
-
-          strong {
-            color: #303133;
-          }
-
-          .pdb-id {
-            font-family: 'Courier New', monospace;
-            background: #e6f7ff;
-            padding: 1px 4px;
-            border-radius: 3px;
-            color: #1890ff;
-            margin: 0 4px;
-          }
-
-          .potency {
-            color: #666;
-            font-style: italic;
-          }
-        }
-      }
-
-      .affected-systems,
-      .detox-methods {
-        margin-bottom: 12px;
-
-        strong {
-          display: block;
-          font-size: 12px;
-          color: #303133;
-          margin-bottom: 6px;
-        }
-
-        .system-tags,
-        .method-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 4px;
-        }
-
-        .system-tag,
-        .method-tag {
-          font-size: 11px;
-        }
-      }
-
-      .primary-sources {
-        strong {
-          display: block;
-          font-size: 12px;
-          color: #303133;
-          margin-bottom: 4px;
-        }
-
-        .sources-text {
-          font-size: 11px;
-          color: #606266;
-          line-height: 1.3;
-        }
-      }
-    }
-
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #ebeef5;
-    }
   }
 
   .empty-state {
