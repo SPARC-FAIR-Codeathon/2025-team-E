@@ -1,1 +1,1 @@
-web: cd toxic-trace-web-app && vite preview --host --port $PORT
+web: cd toxic-trace-web-app && npm start

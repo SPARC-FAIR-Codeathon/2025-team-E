@@ -7,7 +7,7 @@
     "heroku-postbuild": "vite build",
     "build-bundle": "vite build -c vite.bundle-build.js",
     "build-static": "vite build -c vite.static-build.js",
-    "start": "vite build && vite preview",
+    "start": "vite preview --host --port $PORT",
     "test-unit": "mochapack --webpack-config test/unit/webpack.config.js --require test/unit/setup.js test/unit/**/*.spec.js",
     "test": "vitest --dom",
     "cypress-prepare": "node cypress/support/fileUtils.js",
