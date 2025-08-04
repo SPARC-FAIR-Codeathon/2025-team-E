@@ -20,7 +20,29 @@
       </div>
       
       <div class="sidebar-header">
-        <h3>Toxin Database</h3>
+        <div class="header-controls">
+          <div class="mode-toggle">
+            <el-button 
+              :type="currentMode === 'detox' ? 'primary' : 'default'"
+              size="large"
+              @click="setMode('detox')"
+              class="mode-button detox-button"
+            >
+              <el-icon><Aim /></el-icon>
+              Detox
+            </el-button>
+            <el-button 
+              :type="currentMode === 'interactions' ? 'primary' : 'default'"
+              size="large"
+              @click="setMode('interactions')"
+              class="mode-button interactions-button"
+            >
+              <el-icon><Connection /></el-icon>
+              Interactions
+            </el-button>
+          </div>
+          <h3>{{ currentMode === 'detox' ? 'Toxin Detox' : 'Molecular Interactions' }}</h3>
+        </div>
         <el-button 
           type="text" 
           @click="closeSidebar"
@@ -37,7 +59,10 @@
         <!-- Results Count -->
         <div class="results-header">
           <span class="results-count">
-            {{ filteredToxins.length }} of {{ toxinData.toxins.length }} toxins
+            {{ currentMode === 'detox' ? 
+                `${filteredToxins.length} of ${toxinData.toxins.length} toxins` :
+                `${filteredInteractions.length} of ${interactionData.datasets.length} interactions`
+            }}
           </span>
           <el-button 
             v-if="activeFilters.length > 0"
@@ -49,8 +74,8 @@
           </el-button>
         </div>
 
-        <!-- Toxin Cards -->
-        <div class="toxin-cards">
+        <!-- Toxin Cards (Detox Mode) -->
+        <div v-if="currentMode === 'detox'" class="toxin-cards">
           <div 
             v-for="toxin in filteredToxins" 
             :key="toxin.name"
@@ -150,9 +175,90 @@
           </div>
         </div>
 
+        <!-- Interaction Cards (Interactions Mode) -->
+        <div v-if="currentMode === 'interactions'" class="interaction-cards">
+          <div 
+            v-for="interaction in filteredInteractions" 
+            :key="interaction.id"
+            class="interaction-card"
+            @click="selectInteraction(interaction)"
+            :class="{ 'selected': selectedInteractions.includes(interaction.id) }"
+          >
+            <div class="card-header">
+              <h4>{{ interaction.targetProtein }}</h4>
+              <div class="interaction-badges">
+                <el-tag 
+                  :type="getEvidenceType(interaction.evidence.level)"
+                  size="small"
+                >
+                  {{ interaction.evidence.level }}
+                </el-tag>
+                <el-tag 
+                  v-if="interaction.evidence.hasStructuralData"
+                  type="success"
+                  size="small"
+                >
+                  3D Structure
+                </el-tag>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <div class="interaction-info">
+                <div class="info-item">
+                  <strong>System:</strong> {{ interaction.system }}
+                </div>
+                <div class="info-item">
+                  <strong>Toxin:</strong> {{ interaction.toxin }}
+                </div>
+                <div class="info-item">
+                  <strong>Mechanism:</strong> {{ interaction.interaction.mechanism }}
+                </div>
+              </div>
+
+              <p class="interaction-description">
+                {{ interaction.interaction.description }}
+              </p>
+
+              <div class="structure-info" v-if="interaction.structures">
+                <div class="structure-row">
+                  <strong>Natural:</strong> 
+                  <span class="pdb-id">{{ interaction.structures.naturalLigand.pdbId }}</span>
+                  <span class="potency">({{ interaction.structures.naturalLigand.potency }})</span>
+                </div>
+                <div class="structure-row" v-if="interaction.structures.toxinComplex.pdbId">
+                  <strong>Toxin:</strong> 
+                  <span class="pdb-id">{{ interaction.structures.toxinComplex.pdbId }}</span>
+                  <span class="potency">({{ interaction.structures.toxinComplex.potency }})</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <el-button 
+                type="primary" 
+                size="small"
+                @click.stop="viewInteractionDetails(interaction)"
+              >
+                View 3D Structure
+              </el-button>
+              <el-button 
+                v-if="interaction.references && interaction.references.length > 0"
+                type="text" 
+                size="small"
+                @click.stop="openResearch(interaction.references[0].url)"
+              >
+                Research
+              </el-button>
+            </div>
+          </div>
+        </div>
+
         <!-- Empty State -->
-        <div v-if="filteredToxins.length === 0" class="empty-state">
-          <el-empty description="No toxins match your filters">
+        <div v-if="(currentMode === 'detox' && filteredToxins.length === 0) || 
+                   (currentMode === 'interactions' && filteredInteractions.length === 0)" 
+             class="empty-state">
+          <el-empty :description="`No ${currentMode === 'detox' ? 'toxins' : 'interactions'} match your filters`">
             <el-button type="primary" @click="clearFilters">
               Clear Filters
             </el-button>
@@ -166,9 +272,10 @@
 <script>
 import { ref, computed } from 'vue'
 import { ElButton, ElTag, ElIcon, ElEmpty } from 'element-plus'
-import { Close } from '@element-plus/icons-vue'
+import { Close, Aim, Connection } from '@element-plus/icons-vue'
 import ToxinFilter from './ToxinFilter.vue'
 import detoxificationData from './data/detoxification.json'
+import molecularInteractionsData from './data/molecular-interactions.json'
 
 export default {
   name: 'ToxinSidebar',
@@ -178,14 +285,19 @@ export default {
     ElIcon,
     ElEmpty,
     ToxinFilter,
-    Close
+    Close,
+    Aim,
+    Connection
   },
-  emits: ['close', 'toxin-selected', 'view-details'],
+  emits: ['close', 'toxin-selected', 'view-details', 'interaction-selected', 'view-interaction-details'],
   setup(props, { emit }) {
     const activeFilters = ref([])
     const selectedToxins = ref([])
+    const selectedInteractions = ref([])
     const toxinData = ref(detoxificationData)
+    const interactionData = ref(molecularInteractionsData)
     const showSidebar = ref(false) // Start with sidebar closed to show the tab
+    const currentMode = ref('detox') // 'detox' or 'interactions'
 
     const filteredToxins = computed(() => {
       if (activeFilters.value.length === 0) {
@@ -204,6 +316,65 @@ export default {
         })
       })
     })
+
+    const filteredInteractions = computed(() => {
+      if (activeFilters.value.length === 0) {
+        return interactionData.value.datasets
+      }
+
+      return interactionData.value.datasets.filter(interaction => {
+        return activeFilters.value.every(filter => {
+          const { category, value } = filter
+          
+          // Handle different filter categories for interactions
+          switch (category) {
+            case 'system':
+              return interaction.system.toLowerCase() === value.toLowerCase()
+            case 'toxin':
+              return interaction.toxin.toLowerCase().includes(value.toLowerCase())
+            case 'evidenceLevel':
+              return interaction.evidence.level.toLowerCase() === value.toLowerCase()
+            case 'hasStructuralData':
+              return interaction.evidence.hasStructuralData === (value === 'true')
+            case 'comparablePotencies':
+              return interaction.evidence.comparablePotencies === (value === 'true')
+            default:
+              return true
+          }
+        })
+      })
+    })
+
+    const setMode = (mode) => {
+      currentMode.value = mode
+      // Clear filters when switching modes
+      activeFilters.value = []
+      selectedToxins.value = []
+      selectedInteractions.value = []
+    }
+
+    const selectInteraction = (interaction) => {
+      const index = selectedInteractions.value.indexOf(interaction.id)
+      if (index > -1) {
+        selectedInteractions.value.splice(index, 1)
+      } else {
+        selectedInteractions.value.push(interaction.id)
+      }
+      emit('interaction-selected', selectedInteractions.value)
+    }
+
+    const viewInteractionDetails = (interaction) => {
+      emit('view-interaction-details', interaction)
+    }
+
+    const getEvidenceType = (level) => {
+      switch (level.toLowerCase()) {
+        case 'strong': return 'success'
+        case 'moderate': return 'warning'
+        case 'emerging': return 'info'
+        default: return 'info'
+      }
+    }
 
     const handleFilterChange = (filters) => {
       activeFilters.value = filters
@@ -264,20 +435,28 @@ export default {
 
     return {
       showSidebar,
+      currentMode,
       activeFilters,
       selectedToxins,
+      selectedInteractions,
       toxinData,
+      interactionData,
       filteredToxins,
+      filteredInteractions,
       handleFilterChange,
       clearFilters,
       selectToxin,
+      selectInteraction,
       viewDetails,
+      viewInteractionDetails,
       openResearch,
       closeSidebar,
       openSidebar,
+      setMode,
       capitalizeFirst,
       getSeverityType,
-      getDifficultyType
+      getDifficultyType,
+      getEvidenceType
     }
   }
 }
@@ -364,16 +543,104 @@ export default {
     background: #f5f7fa;
     flex-shrink: 0; // Prevent header from shrinking
 
-    h3 {
-      margin: 0;
-      color: #303133;
-      font-size: 18px;
-      font-weight: 600;
+    .header-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+
+      .mode-toggle {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        width: 100%;
+
+        .mode-button {
+          flex: 1;
+          padding: 16px 20px;
+          font-size: 16px;
+          font-weight: 600;
+          border-radius: 12px;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          min-height: 60px;
+          position: relative;
+          overflow: hidden;
+
+          .el-icon {
+            font-size: 20px;
+          }
+
+          &.detox-button {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            
+            &:not(.el-button--primary) {
+              background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+              color: #0891b2;
+              border: 2px solid #0891b2;
+            }
+          }
+
+          &.interactions-button {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border: none;
+            color: white;
+            
+            &:not(.el-button--primary) {
+              background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+              color: #8b5cf6;
+              border: 2px solid #8b5cf6;
+            }
+          }
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+          }
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+            &::before {
+              left: 100%;
+            }
+
+            .el-icon {
+              transform: scale(1.1);
+            }
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
+
+      h3 {
+        margin: 0;
+        color: #303133;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: left;
+      }
     }
 
     .close-button {
       padding: 4px;
       color: #909399;
+      flex-shrink: 0;
       
       &:hover {
         color: #606266;
@@ -414,7 +681,14 @@ export default {
     gap: 16px;
   }
 
-  .toxin-card {
+  .interaction-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .toxin-card,
+  .interaction-card {
     border: 1px solid #e4e7ed;
     border-radius: 8px;
     padding: 16px;
@@ -444,23 +718,30 @@ export default {
         color: #303133;
         font-size: 16px;
         font-weight: 600;
+        flex: 1;
+        line-height: 1.3;
       }
 
-      .toxin-badges {
+      .toxin-badges,
+      .interaction-badges {
         display: flex;
         gap: 4px;
+        flex-wrap: wrap;
+        margin-left: 8px;
       }
     }
 
     .card-content {
-      .toxin-description {
+      .toxin-description,
+      .interaction-description {
         font-size: 13px;
         color: #606266;
         margin-bottom: 12px;
         line-height: 1.4;
       }
 
-      .toxin-info {
+      .toxin-info,
+      .interaction-info {
         margin-bottom: 12px;
 
         .info-item {
@@ -470,6 +751,37 @@ export default {
 
           strong {
             color: #303133;
+          }
+        }
+      }
+
+      .structure-info {
+        margin-bottom: 12px;
+        padding: 8px;
+        background: #f8f9fc;
+        border-radius: 4px;
+        border-left: 3px solid #409eff;
+
+        .structure-row {
+          font-size: 11px;
+          margin-bottom: 4px;
+
+          strong {
+            color: #303133;
+          }
+
+          .pdb-id {
+            font-family: 'Courier New', monospace;
+            background: #e6f7ff;
+            padding: 1px 4px;
+            border-radius: 3px;
+            color: #1890ff;
+            margin: 0 4px;
+          }
+
+          .potency {
+            color: #666;
+            font-style: italic;
           }
         }
       }

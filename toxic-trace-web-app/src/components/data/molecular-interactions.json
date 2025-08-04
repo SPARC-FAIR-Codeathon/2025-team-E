@@ -1,0 +1,425 @@
+{
+  "category": "Molecular Interactions",
+  "description": "Structural evidence of how environmental toxins interact with key biological proteins across different body systems.",
+  "datasets": [
+    {
+      "id": "era-bpa-endocrine",
+      "system": "Endocrine",
+      "targetProtein": "Estrogen Receptor α (ERα LBD)",
+      "toxin": "BPA",
+      "interaction": {
+        "description": "BPA mimics estradiol, binds ERα ligand-binding domain, altering gene transcription.",
+        "mechanism": "Competitive binding to hormone receptor ligand pocket"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "1A52",
+          "name": "17β-Estradiol",
+          "potency": "~0.1–1 nM Kd",
+          "url": "https://www.rcsb.org/structure/1a52"
+        },
+        "toxinComplex": {
+          "pdbId": "3ERT",
+          "name": "BPA",
+          "potency": "~2–5 µM Kd (≈1000× weaker than estradiol)",
+          "url": "https://www.rcsb.org/structure/3ert"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": true,
+        "notes": "Clear occupation of the same binding site, scary ability of BPA to block signal transduction"
+      },
+      "references": [
+        {
+          "title": "BPA estrogen receptor binding study",
+          "url": "https://www.pnas.org/doi/10.1073/pnas.142288199",
+          "source": "PNAS"
+        }
+      ]
+    },
+    {
+      "id": "ttr-pfas-endocrine",
+      "system": "Endocrine",
+      "targetProtein": "Transthyretin (TTR)",
+      "toxin": "PFAS",
+      "interaction": {
+        "description": "PFOS/PFOA compete with thyroxine (T4) for TTR binding site, disrupting hormone transport.",
+        "mechanism": "Competitive inhibition of thyroid hormone transport"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "1ICT",
+          "name": "T4 (Thyroxine)",
+          "potency": "~41 nM Ki",
+          "url": "https://www.rcsb.org/structure/1ict"
+        },
+        "toxinComplex": {
+          "pdbId": "5JID",
+          "name": "PFOS/PFOA",
+          "potency": "IC₅₀ ≈ 940 nM vs T4; Kd ≈ 0.18 µM",
+          "url": "https://www.rcsb.org/structure/5jid"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": true,
+        "notes": "Direct evidence of interaction with PFOS makes this a good example"
+      },
+      "references": [
+        {
+          "title": "PFAS thyroid hormone disruption",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11489250/",
+          "source": "PMC"
+        }
+      ]
+    },
+    {
+      "id": "tlr4-lps-respiratory",
+      "system": "Respiratory",
+      "targetProtein": "TLR4–MD2 Complex",
+      "toxin": "LPS (Microplastic-associated)",
+      "interaction": {
+        "description": "LPS binds TLR4–MD2 complex, initiating immune signaling; microplastics carry LPS mimics.",
+        "mechanism": "Immune activation through pattern recognition receptor"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "3FXI",
+          "name": "LPS",
+          "potency": "nM–low µM agonist potency",
+          "url": "https://www.rcsb.org/structure/3fxi"
+        },
+        "toxinComplex": {
+          "pdbId": "3FXI",
+          "name": "LPS mimics (microplastic-associated)",
+          "potency": "Kd ≈ 14 µM to MD-2; 8.7 µM to CD14; activation in nM–µM range",
+          "url": "https://www.rcsb.org/structure/3fxi"
+        }
+      },
+      "evidence": {
+        "level": "Moderate",
+        "hasStructuralData": true,
+        "comparablePotencies": true,
+        "notes": "Interesting concept but requires docking to confirm hypothesis"
+      },
+      "references": [
+        {
+          "title": "TLR4 immune activation study",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/17846506",
+          "source": "PubMed"
+        }
+      ]
+    },
+    {
+      "id": "pparg-pfas-respiratory",
+      "system": "Respiratory",
+      "targetProtein": "PPARγ (LBD)",
+      "toxin": "PFAS",
+      "interaction": {
+        "description": "PFOA binds PPARγ ligand pocket, mimicking fatty acids and altering receptor activation.",
+        "mechanism": "Ligand mimicry affecting metabolic gene regulation"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "2ZK1",
+          "name": "Endogenous fatty acid",
+          "potency": "~1–10 µM Kd",
+          "url": "https://www.rcsb.org/structure/2zk1"
+        },
+        "toxinComplex": {
+          "pdbId": "8U57",
+          "name": "PFOA",
+          "potency": "Kd ≈ 0.1 µM",
+          "url": "https://www.rcsb.org/structure/8u57"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": true,
+        "notes": "Direct evidence of interaction with PFOA makes this a good example"
+      },
+      "references": [
+        {
+          "title": "PFOA PPARγ binding study",
+          "url": "https://pubs.acs.org/doi/10.1021/acsomega.1c01304",
+          "source": "ACS Omega"
+        }
+      ]
+    },
+    {
+      "id": "hsa-pfas-circulatory",
+      "system": "Circulatory",
+      "targetProtein": "Human Serum Albumin (HSA)",
+      "toxin": "PFAS",
+      "interaction": {
+        "description": "Fatty acids bind Sudlow sites via van der Waals and H-bonds; PFOA mimics fatty acids but with stronger hydrophobic & electrostatic interactions, displacing natural ligands.",
+        "mechanism": "Competitive displacement of natural fatty acid transport"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "1AO6",
+          "name": "Fatty acid",
+          "potency": "~1–10 µM Kd",
+          "url": "https://www.rcsb.org/structure/1ao6"
+        },
+        "toxinComplex": {
+          "pdbId": "7AAI",
+          "name": "PFOA",
+          "potency": "Higher affinity than natural ligands",
+          "url": "https://www.rcsb.org/structure/7aai"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": false,
+        "notes": "PFOA shows stronger binding than natural fatty acids"
+      },
+      "references": [
+        {
+          "title": "PFAS albumin binding study",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11489250/",
+          "source": "PMC"
+        }
+      ]
+    },
+    {
+      "id": "ttr-t4-circulatory",
+      "system": "Circulatory",
+      "targetProtein": "Transthyretin (TTR)",
+      "toxin": "T4 displacement by PFOS",
+      "interaction": {
+        "description": "T4 binds central channel via H-bonds and hydrophobic contacts; PFOS occupies same site with sulfonate and fluorinated tail, competing and disrupting hormone transport.",
+        "mechanism": "Direct competitive inhibition of thyroid hormone transport"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "1ICT",
+          "name": "Thyroxine (T4)",
+          "potency": "~41 nM Ki",
+          "url": "https://www.rcsb.org/structure/1ict"
+        },
+        "toxinComplex": {
+          "pdbId": "5L4J",
+          "name": "PFOS",
+          "potency": "Competitive inhibition",
+          "url": "https://www.rcsb.org/structure/5l4j"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": false,
+        "notes": "Clear structural evidence of competitive binding"
+      },
+      "references": [
+        {
+          "title": "PFOS thyroid hormone competition",
+          "url": "https://www.sciencedirect.com/science/article/pii/S0045653524006167",
+          "source": "ScienceDirect"
+        }
+      ]
+    },
+    {
+      "id": "pparg-pfas-circulatory",
+      "system": "Circulatory",
+      "targetProtein": "PPARγ Ligand-Binding Domain",
+      "toxin": "PFAS",
+      "interaction": {
+        "description": "Fatty acid forms H-bonds and hydrophobic interactions; PFOA mimics ligand, altering receptor conformation and downstream gene activation.",
+        "mechanism": "Receptor modulation affecting metabolic pathways"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "2ZK1",
+          "name": "Fatty acid",
+          "potency": "~1–10 µM Kd",
+          "url": "https://www.rcsb.org/structure/2zk1"
+        },
+        "toxinComplex": {
+          "pdbId": "8U57",
+          "name": "PFOA",
+          "potency": "Enhanced binding affinity",
+          "url": "https://www.rcsb.org/structure/8u57"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": false,
+        "notes": "PFOA shows enhanced binding compared to natural ligands"
+      },
+      "references": [
+        {
+          "title": "PPARγ PFOA interaction study",
+          "url": "https://onlinelibrary.wiley.com/doi/10.1155/2015/262364",
+          "source": "Wiley Online Library"
+        }
+      ]
+    },
+    {
+      "id": "tyrosinase-hydroquinone-skin",
+      "system": "Skin",
+      "targetProtein": "Tyrosinase",
+      "toxin": "Hydroquinone",
+      "interaction": {
+        "description": "Hydroquinone competes with L-DOPA at copper active site, inhibiting melanin synthesis.",
+        "mechanism": "Competitive enzyme inhibition at metal active site"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "1WX2",
+          "name": "L-DOPA",
+          "potency": "Km ≈ 0.31 mM (human tyrosinase)",
+          "url": "https://www.rcsb.org/structure/1wx2"
+        },
+        "toxinComplex": {
+          "pdbId": "1WX2",
+          "name": "Hydroquinone inhibitor",
+          "potency": "Competitive inhibition",
+          "url": "https://www.rcsb.org/structure/1wx2"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": false,
+        "notes": "Well-characterized competitive inhibition mechanism"
+      },
+      "references": [
+        {
+          "title": "Tyrosinase inhibition study",
+          "url": "https://www.pnas.org/doi/10.1073/pnas.142288199",
+          "source": "PNAS"
+        }
+      ]
+    },
+    {
+      "id": "cyp1a1-bap-skin",
+      "system": "Skin",
+      "targetProtein": "Cytochrome P450 1A1 (CYP1A1)",
+      "toxin": "Benzo[a]pyrene",
+      "interaction": {
+        "description": "Benzo[a]pyrene metabolised in substrate pocket forming reactive metabolites causing DNA adducts and oxidative stress.",
+        "mechanism": "Metabolic activation leading to carcinogenic metabolites"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "4I8V",
+          "name": "Substrate analog",
+          "potency": "Enzymatic conversion",
+          "url": "https://www.rcsb.org/structure/4i8v"
+        },
+        "toxinComplex": {
+          "pdbId": "4I8V",
+          "name": "Benzo[a]pyrene (docked)",
+          "potency": "Metabolic substrate",
+          "url": "https://www.rcsb.org/structure/4i8v"
+        }
+      },
+      "evidence": {
+        "level": "Moderate",
+        "hasStructuralData": true,
+        "comparablePotencies": false,
+        "notes": "Metabolic conversion rather than simple binding"
+      },
+      "references": [
+        {
+          "title": "CYP1A1 benzo[a]pyrene metabolism",
+          "url": "https://www.sciencedirect.com/science/article/pii/S0045653524006167",
+          "source": "ScienceDirect"
+        }
+      ]
+    },
+    {
+      "id": "era-bpa-skin",
+      "system": "Skin",
+      "targetProtein": "Estrogen Receptor α (ERα)",
+      "toxin": "BPA",
+      "interaction": {
+        "description": "BPA binds hormone domain mimicking estradiol, disrupting gene expression in skin cells.",
+        "mechanism": "Hormone receptor modulation affecting skin cell biology"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "3ERT",
+          "name": "Estradiol",
+          "potency": "~0.1–1 nM Kd",
+          "url": "https://www.rcsb.org/structure/3ert"
+        },
+        "toxinComplex": {
+          "pdbId": "3ERT",
+          "name": "BPA mimics estradiol",
+          "potency": "~1000× weaker than estradiol",
+          "url": "https://www.rcsb.org/structure/3ert"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": false,
+        "notes": "Same structural evidence as endocrine system"
+      },
+      "references": [
+        {
+          "title": "BPA estrogen receptor binding",
+          "url": "https://www.pnas.org/doi/10.1073/pnas.142288199",
+          "source": "PNAS"
+        }
+      ]
+    },
+    {
+      "id": "era-bpa-nervous",
+      "system": "Nervous",
+      "targetProtein": "Estrogen Receptor α (ERα)",
+      "toxin": "BPA",
+      "interaction": {
+        "description": "BPA binds ligand pocket, mimicking natural hormone, affecting neuronal gene expression and endocrine signalling.",
+        "mechanism": "Neurohormonal disruption through receptor modulation"
+      },
+      "structures": {
+        "naturalLigand": {
+          "pdbId": "3ERT",
+          "name": "Estradiol",
+          "potency": "~0.1–1 nM Kd",
+          "url": "https://www.rcsb.org/structure/3ert"
+        },
+        "toxinComplex": {
+          "pdbId": "3ERT",
+          "name": "BPA mimics estradiol",
+          "potency": "~1000× weaker than estradiol",
+          "url": "https://www.rcsb.org/structure/3ert"
+        }
+      },
+      "evidence": {
+        "level": "Strong",
+        "hasStructuralData": true,
+        "comparablePotencies": false,
+        "notes": "Neural-specific implications of estrogen receptor disruption"
+      },
+      "references": [
+        {
+          "title": "BPA neurological effects",
+          "url": "https://www.pnas.org/doi/10.1073/pnas.142288199",
+          "source": "PNAS"
+        }
+      ]
+    }
+  ],
+  "filterOptions": {
+    "systems": ["Endocrine", "Respiratory", "Circulatory", "Skin", "Nervous", "Lymphatic", "Digestive"],
+    "toxins": ["BPA", "PFAS", "Phthalates", "Microplastics", "Hydroquinone", "Benzo[a]pyrene", "LPS"],
+    "evidenceLevel": ["Strong", "Moderate", "Emerging"],
+    "hasStructuralData": ["true", "false"],
+    "comparablePotencies": ["true", "false"]
+  },
+  "metadata": {
+    "lastUpdated": "2025-08-04",
+    "dataSource": "Molecular interaction database compilation",
+    "note": "Focuses on cases with available PDB structural data and comparable potency measurements"
+  }
+}
