@@ -164,3 +164,6 @@ const PDB_FILES = [
 
 A few of the links in our database are going to the wrong papers unfortunately, so if the paper you end up in looks wrong, it probably is
 # FundLab
+I forgot to deploy fundlab, but here is a screenshot of it:
+
+<img width="3512" height="5040" alt="image" src="https://github.com/user-attachments/assets/a7aa5b05-a672-4d36-b901-b0150f704e34" />
