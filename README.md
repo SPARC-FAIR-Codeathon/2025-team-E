@@ -18,6 +18,10 @@ Code for the site can be viewed [here](https://github.com/SPARC-FAIR-Codeathon/2
 
 The website is a [git](https://github.com/ABI-Software/mapintegratedvuer) fork, so can be easily deployed to sparc.science (and other websites)
 
+### User Documentation
+
+User documentation for how to use the site can be viewed here:
+https://github.com/SPARC-FAIR-Codeathon/2025-team-E/blob/main/documentation/user_guide.md
 
 ## Molecule Viewer Documentation
 
