@@ -23,11 +23,14 @@ The website is a [git](https://github.com/ABI-Software/mapintegratedvuer) fork, 
 User documentation for how to use the site can be viewed here:
 https://github.com/SPARC-FAIR-Codeathon/2025-team-E/blob/main/documentation/user_guide.md
 
-## Molecule Viewer Documentation
+# Molecular Structure Viewer Documentaion
 
-# Molecular Structure Viewer
+A component of toxic trace for viewing how molecules bind
 
-A web-based 3D molecular visualization tool for exploring protein-ligand interactions, built with 3Dmol.js.
+<img width="3537" height="1890" alt="image" src="https://github.com/user-attachments/assets/7e0b5125-2127-495d-b4b4-42bf85ddbbaa" />
+
+
+It is a web-based 3D molecular visualization tool for exploring protein-ligand interactions, built with 3Dmol.js.
 
 This molecular viewer was developed to visualize and analyze the binding interactions between environmental toxins and biological receptors.
 
