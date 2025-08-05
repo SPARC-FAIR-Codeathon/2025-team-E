@@ -65,6 +65,8 @@
     "@vue/shared": "^3.4.21",
     "css-element-queries": "^1.2.3",
     "element-plus": "2.8.4",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "marked": "^4.3.0",
     "mitt": "^3.0.1",
     "pinia": "^2.1.7",

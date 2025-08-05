@@ -3,14 +3,14 @@
     <div class="map-selector-container">
     
       <div class="select-label">
-        Select Body System:
+        Body System:
       </div>
 
       <el-select 
         v-model="selectedMap" 
         placeholder="Body System" 
         @change="onMapSelectionChange"
-        style="width: 200px"
+        style="width: 140px"
       >
         <el-option
           v-for="option in mapOptions"
@@ -624,6 +624,37 @@ export default {
       // Toggle the funding popup visibility
       this.fundingPopupVisible = !this.fundingPopupVisible;
     },
+    openChatbot: function() {
+      // Programmatically open the Chatbase chat widget
+      console.log('Opening chatbot...');
+      
+      // Try to click the chatbase button to open the chat
+      const chatButton = document.getElementById('chatbase-bubble-button');
+      if (chatButton) {
+        chatButton.click();
+        console.log('Chatbot opened by clicking the button');
+      } else {
+        console.log('Chatbase button not found, trying to trigger via window.chatbase');
+        
+        // Alternative method: try to use the chatbase API if available
+        if (window.chatbase) {
+          try {
+            window.chatbase('open');
+          } catch (error) {
+            console.log('Failed to open chatbot via API:', error);
+          }
+        }
+        
+        // Retry after a short delay in case the button wasn't loaded yet
+        setTimeout(() => {
+          const retryButton = document.getElementById('chatbase-bubble-button');
+          if (retryButton) {
+            retryButton.click();
+            console.log('Chatbot opened on retry');
+          }
+        }, 500);
+      }
+    },
     onHealthDataUpdated: function(healthData) {
       // Update organ health data with quiz results
       Object.keys(healthData).forEach(organ => {
@@ -887,6 +918,17 @@ export default {
     this.$nextTick(() => {
       this.initializeChatbase();
     });
+    
+    // Listen for chatbot open event
+    EventBus.on("openChatbot", this.openChatbot);
+    
+    // Listen for toxin sidebar open event
+    EventBus.on("openToxinSidebar", this.toggleToxinSidebar);
+  },
+  unmounted: function () {
+    // Clean up EventBus listeners
+    EventBus.off("openChatbot", this.openChatbot);
+    EventBus.off("openToxinSidebar", this.toggleToxinSidebar);
   },
 };
 </script>
@@ -907,7 +949,7 @@ export default {
   border-bottom: 1px solid #e9ecef;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -921,8 +963,19 @@ export default {
 .quiz-controls {
   margin-left: auto;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
+  
+  .el-button {
+    font-size: 13px;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+  
+  .el-button--small {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
 }
 
 .map-display-area {
@@ -1216,6 +1269,32 @@ export default {
   bottom: 20px;
   right: 20px;
   z-index: 9999;
+}
+
+// Responsive adjustments for 1080px and below
+@media (max-width: 1080px) {
+  .map-selector-container {
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  
+  .quiz-controls {
+    gap: 4px;
+    
+    .el-button {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+    
+    .el-button--small {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+  }
+  
+  .select-label {
+    font-size: 13px;
+  }
 }
 
 </style>

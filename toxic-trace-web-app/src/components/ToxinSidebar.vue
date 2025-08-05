@@ -32,7 +32,7 @@
               class="mode-button detox-button"
             >
               <el-icon><Aim /></el-icon>
-              Detox
+              Toxins
             </el-button>
             <el-button 
               :type="currentMode === 'interactions' ? 'primary' : 'default'"
@@ -148,6 +148,8 @@ import NerveInteractionCard from './cards/NerveInteractionCard.vue'
 import detoxificationData from './data/detoxification.json'
 import molecularInteractionsData from './data/molecular-interactions.json'
 import nerveInteractionsData from './data/nerve-interactions.json'
+import EventBus from './EventBus'
+import { onMounted, onUnmounted } from 'vue'
 
 export default {
   name: 'ToxinSidebar',
@@ -332,6 +334,15 @@ export default {
     const openSidebar = () => {
       showSidebar.value = true
     }
+
+    // Set up EventBus listeners for opening the sidebar
+    onMounted(() => {
+      EventBus.on("openToxinSidebar", openSidebar)
+    })
+
+    onUnmounted(() => {
+      EventBus.off("openToxinSidebar", openSidebar)
+    })
 
     const capitalizeFirst = (str) => {
       return str.charAt(0).toUpperCase() + str.slice(1)

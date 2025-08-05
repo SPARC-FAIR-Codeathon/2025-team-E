@@ -1,147 +1,19 @@
 <template>
   <div class="header">
     <map-svg-sprite-color />
-    <search-controls
-      @search="$emit('local-search', {term: $event});"
-      @fetch-suggestions="$emit('fetch-suggestions', {data: $event});"
-      :failedSearch="failedSearch"
-    />
+    
+    <h1 class="toxic-trace-title">toxic-trace</h1>
 
     <el-row class="icon-group">
-      <div class="viewing-mode-selector">
-        Viewing Mode:
-        <el-dropdown
-          :teleported="false"
-          trigger="hover"
-          class="toolbar-dropdown"
-          popper-class="toolbar-dropdown-dropdown"
-          :hide-on-click="false"
-          :disabled="!mapLoaded"
-        >
-        <span class="el-dropdown-link">
-          <el-icon class="el-icon--left" v-if="globalSettings.viewingMode === 'Exploration'">
-            <el-icon-compass />
-          </el-icon>
-          <el-icon class="el-icon--left" v-if="globalSettings.viewingMode === 'Neuron Connection'">
-            <el-icon-share />
-          </el-icon>
-          <el-icon class="el-icon--left" v-if="globalSettings.viewingMode === 'Annotation'">
-            <el-icon-edit-pen />
-          </el-icon>
-          {{ globalSettings.viewingMode }}
-          <el-icon class="el-icon--right">
-            <el-icon-arrow-down />
-          </el-icon>
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item v-for="(value, key, index) in viewingModes"
-              :key="key"
-              @click="updateViewingMode($event, key)"
-              :class="{'is-selected': globalSettings.viewingMode === key }"
-            >
-              <span>
-                <el-icon class="el-icon--left" v-if="key === 'Exploration'">
-                  <el-icon-compass />
-                </el-icon>
-                <el-icon class="el-icon--left" v-if="key === 'Neuron Connection'">
-                  <el-icon-share />
-                </el-icon>
-                <el-icon class="el-icon--left" v-if="key === 'Annotation'">
-                  <el-icon-edit-pen />
-                </el-icon>
-                {{ key }}
-              </span>
-              <small class="el-option__description">
-                <template v-if="key === 'Annotation'">
-                  <template v-if="authorisedUser">
-                    {{ value[1] }}
-                  </template>
-                  <template v-else>
-                    {{ value[0] }}
-                  </template>
-                  <template v-if="offlineAnnotationEnabled">
-                    (Anonymous annotate)
-                  </template>
-                </template>
-                <template v-else>
-                  {{ value }}
-                </template>
-              </small>
-              <!-- <template v-if="key === 'Exploration'">
-                <div class="setting-popover-block" v-if="'displayMarkers' in globalSettings">
-                  <el-popover
-                    class="tooltip"
-                    content="Switch to Exploration mode to enable."
-                    :teleported="false"
-                    popper-class="header-popper"
-                    :offset="4"
-                    :disabled="globalSettings.viewingMode === 'Exploration'"
-                  >
-                    <template #reference>
-                      <el-checkbox
-                        v-model="globalSettings.displayMarkers"
-                        @change="updateGlobalSettings"
-                        size="small"
-                        :disabled="globalSettings.viewingMode !== 'Exploration'"
-                      >
-                        Display Map Markers
-                      </el-checkbox>
-                    </template>
-                  </el-popover>
-                </div>
-              </template> -->
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-        </el-dropdown>
-      </div>
-
-      <el-popover
-        v-if="activeViewRef"
-        :virtual-ref="activeViewRef"
-        ref="viewPopover"
-        placement="bottom"
-        width="133"
-        :teleported=false
-        trigger="click"
-        popper-class="view-icon-popover"
-        virtual-triggering
-        >
-        <el-row :gutter="20"
-          v-for="item in viewIcons"
-          :key="item.name"
-          :class="[{ 'active': item.icon ==  activeView},
-            {'disabled': item.min > numberOfEntries},
-            'view-icon-row']"
-          @click="viewClicked(item.icon)"
-        >
-          <el-col :span="4">
-            <map-svg-icon :icon="item.icon"
-              class="view-icon"/>
-          </el-col>
-          <el-col :offset="2" :span="18" class="view-text">
-            {{item.name}}
-          </el-col>
-        </el-row>
-      </el-popover>
-      <el-popover class="tooltip" content="Split screen" placement="bottom-end"
-        :show-after="helpDelay" :teleported=false trigger="hover"
-        popper-class="header-popper"
-      >
-        <template #reference>
-          <map-svg-icon :icon="activeView"
-          ref="activeViewRef"
-          :class="[{'disabled': (1 >= numberOfEntries)},
-            'header-icon', 'splitscreen-icon']"
-          />
-        </template>
-      </el-popover>
+      
+    
 
       <el-popover class="tooltip" content="Toxin Database" placement="bottom-end" :show-after="helpDelay"
         :teleported=false trigger="hover" popper-class="header-popper" >
         <template #reference>
-          <map-svg-icon icon="filter" class="header-icon" @click="openToxinSidebar()"/>
+          <el-icon class="header-icon" @click="openToxinSidebar()">
+            <ElIconFilter />
+          </el-icon>
         </template>
       </el-popover>
       <el-popover class="tooltip" content="Help" placement="bottom-end" :show-after="helpDelay"
@@ -241,19 +113,7 @@
           </el-row>
         </template>
       </el-popover>
-      <el-popover class="tooltip"  content="Get permalink" placement="bottom-end"
-        :show-after="helpDelay" :teleported=false trigger="hover"
-        popper-class="header-popper"
-        >
-        <template #reference>
-          <map-svg-icon icon="permalink"
-            ref="permalinkRef"
-            class="header-icon"
-            @click="requestShareLink"
-            v-show="shareLink"
-          />
-        </template>
-      </el-popover>
+      
       <el-popover class="tooltip" content="Close" placement="bottom-end" :show-after="helpDelay"
         :teleported=false trigger="hover" popper-class="header-popper">
         <template #reference>
@@ -275,42 +135,6 @@
         >
         <div class="setting-popover-inner">
           <h4>Display options:</h4>
-          <!-- <div class="setting-popover-block" v-if="'displayMarkers' in globalSettings">
-            <el-checkbox
-              v-model="globalSettings.displayMarkers"
-              @change="updateGlobalSettings"
-            >
-              Display Map Markers
-            </el-checkbox>
-          </div> -->
-          <!-- <div class="setting-popover-block" v-if="'highlightConnectedPaths' in globalSettings || 'highlightDOIPaths' in globalSettings">
-            <h5>Card Hover</h5>
-            <el-checkbox
-              v-if="'highlightConnectedPaths' in globalSettings"
-              v-model="globalSettings.highlightConnectedPaths"
-              @change="updateGlobalSettings"
-            >
-              Highlight Connected Paths
-            </el-checkbox>
-            <el-checkbox
-              v-if="'highlightDOIPaths' in globalSettings"
-              v-model="globalSettings.highlightDOIPaths"
-              @change="updateGlobalSettings"
-            >
-              Highlight DOI Paths
-            </el-checkbox>
-          </div> -->
-          <!-- <div class="setting-popover-block" v-if="'interactiveMode' in globalSettings">
-            <h5>Interactive Mode</h5>
-            <el-radio-group
-              v-model="globalSettings.interactiveMode"
-              @change="updateGlobalSettings"
-            >
-              <el-radio value="dataset">Dataset Exploration</el-radio>
-              <el-radio value="connectivity">Connectivity Exploration</el-radio>
-              <el-radio value="multiscale">Multiscale Model</el-radio>
-            </el-radio-group>
-          </div> -->
 
           <div class="setting-popover-block" v-if="'flightPathDisplay' in globalSettings">
             <h5>Flight path</h5>
@@ -403,6 +227,7 @@ import SearchControls from './SearchControls.vue';
 import {
   CopyDocument as ElIconCopyDocument,
   MoreFilled as ElIconMoreFilled,
+  Filter as ElIconFilter,
 } from '@element-plus/icons-vue';
 import {
   ElButton as Button,
@@ -435,6 +260,7 @@ export default {
     MapSvgSpriteColor,
     SearchControls,
     ElIconCopyDocument,
+    ElIconFilter,
   },
   props: {
     /**
@@ -550,7 +376,7 @@ export default {
       this.$emit("titleClicked", id);
     },
     startHelp: function(){
-      EventBus.emit("startHelp");
+      EventBus.emit("openChatbot");
     },
     onFullscreen: function() {
       this.$emit("onFullscreen");
@@ -565,7 +391,7 @@ export default {
       this.$emit("close");
     },
     openToxinSidebar: function() {
-      this.$emit("open-toxin-sidebar");
+      EventBus.emit("openToxinSidebar");
     },
     copyShareLink: function() {
       if (document) {
@@ -643,6 +469,25 @@ export default {
 
 .header {
   height:32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.toxic-trace-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: $app-primary-color;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(123, 44, 191, 0.3);
+  background: linear-gradient(135deg, #7b2cbf 0%, #9d4edd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .share-options.el-button {
