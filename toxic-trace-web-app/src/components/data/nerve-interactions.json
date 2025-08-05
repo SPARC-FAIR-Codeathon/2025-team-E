@@ -8,6 +8,12 @@
       "targetProtein": "Estrogen Receptor",
       "toxin": "BPA",
       "nerve": "Vagus nerve (CN X)",
+      "3d-viewer": {
+        "src": "/molecular_viewer/estrogen_receptor/estrogen_receptor.html",
+        "width": "100%",
+        "height": "600px",
+        "name": "Estrogen Receptor"
+      },
       "keyFunctions": "Parasympathetic control of heart, gut & anti-inflammatory reflex",
       "interaction": {
         "description": "BPA disrupts ER-dependent transcription and triggers rapid Ca²⁺/PKA signaling in vagal neurons.",
@@ -34,6 +40,12 @@
       "targetProtein": "Estrogen Receptor",
       "toxin": "BPA",
       "nerve": "Pelvic splanchnic nerves (S2–S4)",
+      "3d-viewer": {
+        "src": "/molecular_viewer/estrogen_receptor/estrogen_receptor.html",
+        "width": "100%",
+        "height": "600px",
+        "name": "Estrogen Receptor"
+      },
       "keyFunctions": "Parasympathetic supply to bladder, distal colon, uterus",
       "interaction": {
         "description": "BPA stabilizes agonist-like ER conformation, affecting gene regulation in sacral preganglionic neurons.",
@@ -59,6 +71,12 @@
       "id": "er-bpa-hypothalamic",
       "system": "Nervous",
       "targetProtein": "Estrogen Receptor",
+      "3d-viewer": {
+        "src": "/molecular_viewer/estrogen_receptor/estrogen_receptor.html",
+        "width": "100%",
+        "height": "600px",
+        "name": "Estrogen Receptor"
+      },
       "toxin": "BPA",
       "nerve": "Hypothalamic ER-sensitive projections",
       "keyFunctions": "Pre-optic, arcuate, PVN → thermoregulation & stress response",
@@ -92,6 +110,12 @@
         "description": "PFAS interfere with T4 transport, creating systemic hypothyroid signaling that affects sympathetic function.",
         "mechanism": "Reduced T4 → less local T3 → decreased β-adrenergic receptors and catecholamine enzymes"
       },
+      "3d-viewer": {
+        "src": "/molecular_viewer/transthyretin/transthyretin.html",
+        "width": "100%",
+        "height": "600px",
+        "name": "Transthyretin"
+      },
       "pathways": [
         "Blunted sympathetic firing",
         "Bradycardia and impaired cold-induced thermogenesis",
@@ -115,6 +139,12 @@
       "toxin": "PFAS",
       "nerve": "Phrenic nerve (C3-C5)",
       "keyFunctions": "Motor outflow to diaphragm",
+      "3d-viewer": {
+        "src": "/molecular_viewer/transthyretin/transthyretin.html",
+        "width": "100%",
+        "height": "600px",
+        "name": "Transthyretin"
+      },
       "interaction": {
         "description": "PFAS-induced T4 reduction affects diaphragm myoneural development and excitability.",
         "mechanism": "T4 regulates diaphragm myosin isoforms, mitochondrial density and phrenic motoneuron Na⁺/K⁺-ATPase"
@@ -141,6 +171,12 @@
       "toxin": "PFAS",
       "nerve": "Peripheral sensory nerves",
       "keyFunctions": "Myelinated Aβ, Aδ and C fibers for sensation",
+      "3d-viewer": {
+        "src": "/molecular_viewer/transthyretin/transthyretin.html",
+        "width": "100%",
+        "height": "600px",
+        "name": "Transthyretin"
+      },
       "interaction": {
         "description": "T4 scarcity from PFAS exposure delays myelination and reduces fiber diameter.",
         "mechanism": "Schwann-cell proliferation and myelin-protein transcription require thyroid hormone"

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Molecular Structure Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 350px;
+            background-color: #2a2a2a;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #3a3a3a;
+            transition: margin-left 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .sidebar.collapsed {
+            margin-left: -350px;
+        }
+
+        /* Much more visible toggle button */
+        .sidebar-toggle {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            width: 50px;
+            height: 50px;
+            background-color: #4a9eff;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar-toggle:hover {
+            background-color: #3a8eef;
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle span {
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Alternative hamburger menu style */
+        .menu-icon {
+            width: 30px;
+            height: 24px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-icon span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .viewer-container {
+            flex: 1;
+            position: relative;
+            background-color: #000000;
+        }
+
+        #molviewer {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #333333;
+            border-radius: 8px;
+        }
+
+        .control-group h3 {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #aaaaaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .structure-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #3a3a3a;
+            border-radius: 6px;
+            border: 1px solid #4a4a4a;
+        }
+
+        .structure-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .structure-name {
+            font-weight: 500;
+            font-size: 14px;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .structure-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .mini-btn {
+            padding: 4px 8px;
+            background-color: #4a4a4a;
+            border: 1px solid #5a5a5a;
+            border-radius: 3px;
+            color: white;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .mini-btn:hover {
+            background-color: #5a5a5a;
+        }
+
+        .mini-btn.active {
+            background-color: #2c5aa0;
+            border-color: #3a6ab4;
+        }
+
+        .visibility-btn {
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-picker {
+            width: 24px;
+            height: 24px;
+            border: 1px solid #5a5a5a;
+            border-radius: 3px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .toggle-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4a4a4a;
+            border: 1px solid #5a5a5a;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .toggle-btn:hover {
+            background-color: #5a5a5a;
+        }
+
+        .loading-status {
+            text-align: center;
+            padding: 20px;
+            color: #aaaaaa;
+            font-size: 14px;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .info-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(42, 42, 42, 0.95);
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 12px;
+            max-width: 400px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-panel h4 {
+            margin-bottom: 12px;
+            color: #4a9eff;
+            font-size: 16px;
+        }
+
+        .info-panel .stats {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .info-panel .stats p {
+            margin-bottom: 4px;
+            color: #cccccc;
+        }
+
+        .info-panel .description {
+            color: #cccccc;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .info-panel .citation {
+            color: #aaaaaa;
+            font-size: 11px;
+            font-style: italic;
+        }
+
+        /* Help tooltip */
+        .help-tooltip {
+            position: fixed;
+            top: 70px;
+            left: 10px;
+            background-color: rgba(74, 158, 255, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            max-width: 200px;
+        }
+
+        /* Scrollbar styling */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #2a2a2a;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #4a4a4a;
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #5a5a5a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar collapsed" id="sidebar">
+            <h2 style="margin-bottom: 20px; font-size: 20px;">Structure Viewer</h2>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <h3>Loaded Structures</h3>
+                    <div id="structureList">
+                        <div class="loading-status">Loading structures...</div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Global Controls</h3>
+                    <button class="toggle-btn" id="resetView">Reset View</button>
+                    <button class="toggle-btn" id="centerVisible">Center All Visible</button>
+                    <button class="toggle-btn" id="hideAllStructures">Hide All</button>
+                    <button class="toggle-btn" id="showAllStructures">Show All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Big blue toggle button -->
+        <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+
+        <!-- Help tooltip -->
+        <div class="help-tooltip" id="helpTooltip">
+            Click to show/hide the control panel
+        </div>
+
+        <div class="viewer-container" id="viewerContainer">
+            <div id="molviewer"></div>
+            <div class="info-panel" id="infoPanel" style="display: none;">
+                <h4>PPAR-γ nuclear receptor</h4>
+                <div class="stats">
+                    <p id="structureCount"></p>
+                    <p id="totalAtoms"></p>
+                    <p id="visibleStructures"></p>
+                </div>
+                <div class="description">
+                    Perfluorooctanoic acid (PFOA) – another per- and poly-fluoroalkyl substance – actually binds the metabolic sensor PPAR-γ about 55-times more tightly than its usual long-chain fatty-acid partner.
+                </div>
+                <div class="citation">
+                    (PDB templates: PFOA in 8U57; Fatty Acid in 2ZK1)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://3dmol.org/build/3Dmol-min.js"></script>
+    <script>
+        // Configuration - Define your PDB files here
+        const PDB_FILES = [
+            { name: 'Peroxisome Receptor', file: '2zk1_receptor.pdb', color: '#708090' },
+            { name: 'Natural (Fatty Acid)', file: '2zk1_ligand.pdb', color: '#32CD32' },
+            { name: 'Toxin (PFOA)', file: '8u57_ligand.pdb', color: '#FF6347' },
+        ];
+
+        // Global variables
+        let viewer = null;
+        let structures = new Map();
+        let structureCounter = 0;
+
+        // Initialize viewer
+        function initViewer() {
+            const element = document.getElementById('molviewer');
+            const config = { backgroundColor: 'black' };
+            viewer = $3Dmol.createViewer(element, config);
+            viewer.setViewStyle({ style: 'outline', color: 'black', width: 0.01 });
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const button = document.getElementById('sidebarToggle');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            // Update button position
+            if (sidebar.classList.contains('collapsed')) {
+                button.style.left = '10px';
+            } else {
+                button.style.left = '360px';
+            }
+            
+            // Hide tooltip after first click
+            const tooltip = document.getElementById('helpTooltip');
+            if (tooltip) {
+                tooltip.style.display = 'none';
+            }
+            
+            // Resize viewer after transition
+            setTimeout(() => {
+                if (viewer) {
+                    viewer.resize();
+                    viewer.render();
+                }
+            }, 300);
+        }
+
+        // Hide tooltip after a few seconds
+        setTimeout(() => {
+            const tooltip = document.getElementById('helpTooltip');
+            if (tooltip) {
+                tooltip.style.display = 'none';
+            }
+        }, 5000);
+
+        // Structure class
+        class Structure {
+            constructor(id, name, data, color) {
+                this.id = id;
+                this.name = name;
+                this.data = data;
+                this.model = null;
+                this.visible = true;
+                this.color = color;
+                this.isLigand = false;
+            }
+
+            detectMoleculeType() {
+                const atoms = this.model.atoms;
+                const residues = new Set(atoms.map(a => a.resn));
+                
+                // Check if it's a protein
+                const proteinResidues = ['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLN', 'GLU', 'GLY', 'HIS', 
+                                       'ILE', 'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 
+                                       'TYR', 'VAL'];
+                const isProtein = Array.from(residues).some(r => proteinResidues.includes(r));
+                
+                // If not protein and small molecule, it's likely a ligand
+                this.isLigand = !isProtein && atoms.length < 200;
+            }
+
+            updateDisplay() {
+                if (!this.model) return;
+
+                // Clear and reapply styles
+                viewer.setStyle({model: this.model}, {});
+
+                if (this.visible) {
+                    const colorInt = parseInt(this.color.replace('#', ''), 16);
+                    
+                    if (this.isLigand) {
+                        // Show ligands as sticks
+                        viewer.setStyle(
+                            {model: this.model},
+                            {stick: {color: colorInt}}
+                        );
+                    } else {
+                        // Show proteins as cartoons
+                        viewer.setStyle(
+                            {model: this.model},
+                            {cartoon: {color: colorInt}}
+                        );
+                    }
+                }
+
+                viewer.render();
+            }
+
+            center() {
+                if (this.visible && this.model) {
+                    viewer.center({model: this.model});
+                    viewer.zoomTo({model: this.model});
+                    viewer.render();
+                }
+            }
+        }
+
+        // Load structure from URL
+        async function loadStructureFromURL(name, url, color) {
+            try {
+                console.log(`Loading ${name} from ${url}`);
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const pdbData = await response.text();
+                const structure = addStructure(name, pdbData, color);
+                return { success: true, structure, name };
+            } catch (error) {
+                console.error(`Error loading ${name}:`, error);
+                return { success: false, error: error.message, name };
+            }
+        }
+
+        // Add structure to viewer
+        function addStructure(name, data, color) {
+            if (!viewer) initViewer();
+
+            const id = structureCounter++;
+            const structure = new Structure(id, name, data, color);
+            
+            structure.model = viewer.addModel(data, 'pdb');
+            structure.detectMoleculeType();
+            structures.set(id, structure);
+            
+            structure.updateDisplay();
+            return structure;
+        }
+
+        // Load all predefined structures
+        async function loadAllStructures() {
+            const loadingStatus = document.querySelector('.loading-status');
+            loadingStatus.textContent = 'Loading structures...';
+
+            const results = [];
+            for (const pdbConfig of PDB_FILES) {
+                const result = await loadStructureFromURL(pdbConfig.name, pdbConfig.file, pdbConfig.color);
+                results.push(result);
+            }
+
+            // Show loading results
+            const failed = results.filter(r => !r.success);
+            const succeeded = results.filter(r => r.success);
+            
+            console.log(`Successfully loaded: ${succeeded.length} structures`);
+            succeeded.forEach(s => console.log(`  - ${s.name}`));
+            
+            if (failed.length > 0) {
+                console.log(`Failed to load: ${failed.length} structures`);
+                failed.forEach(f => console.log(`  - ${f.name}: ${f.error}`));
+                
+                loadingStatus.innerHTML = `
+                    <div>Loaded ${succeeded.length} of ${results.length} structures</div>
+                    ${failed.map(f => `<div class="error-message">Failed to load ${f.name}: ${f.error}</div>`).join('')}
+                `;
+            } else {
+                loadingStatus.style.display = 'none';
+            }
+
+            updateStructureList();
+            updateInfoPanel();
+
+            if (structures.size > 0) {
+                viewer.zoomTo();
+                viewer.render();
+            }
+        }
+
+        // Update structure list UI
+        function updateStructureList() {
+            const listContainer = document.getElementById('structureList');
+            
+            // Keep loading status if present
+            const loadingStatus = listContainer.querySelector('.loading-status');
+            if (loadingStatus && structures.size === 0) {
+                return;
+            }
+
+            // Clear and rebuild list
+            listContainer.innerHTML = '';
+            
+            structures.forEach((structure, id) => {
+                const structureEl = createStructureElement(structure);
+                listContainer.appendChild(structureEl);
+            });
+        }
+
+        // Create structure element UI
+        function createStructureElement(structure) {
+            const div = document.createElement('div');
+            div.className = 'structure-item';
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'structure-header';
+
+            const name = document.createElement('div');
+            name.className = 'structure-name';
+            name.textContent = structure.name + (structure.isLigand ? '' : '');
+
+            const controls = document.createElement('div');
+            controls.className = 'structure-controls';
+
+            // Color picker for all structures
+            const colorPicker = document.createElement('input');
+            colorPicker.type = 'color';
+            colorPicker.className = 'color-picker';
+            colorPicker.value = structure.color;
+            colorPicker.title = 'Change structure color';
+            colorPicker.addEventListener('change', (e) => {
+                structure.color = e.target.value;
+                structure.updateDisplay();
+            });
+            controls.appendChild(colorPicker);
+
+            // Visibility toggle
+            const visBtn = document.createElement('button');
+            visBtn.className = `mini-btn visibility-btn ${structure.visible ? 'active' : ''}`;
+            visBtn.innerHTML = structure.visible ? '👁' : '👁‍🗨';
+            visBtn.title = 'Toggle visibility';
+            visBtn.addEventListener('click', () => {
+                structure.visible = !structure.visible;
+                visBtn.classList.toggle('active');
+                visBtn.innerHTML = structure.visible ? '👁' : '👁‍🗨';
+                structure.updateDisplay();
+                updateInfoPanel();
+            });
+
+            // Center button
+            const centerBtn = document.createElement('button');
+            centerBtn.className = 'mini-btn';
+            centerBtn.innerHTML = '⊕';
+            centerBtn.title = 'Center view';
+            centerBtn.addEventListener('click', () => {
+                structure.center();
+            });
+
+            controls.appendChild(visBtn);
+            controls.appendChild(centerBtn);
+
+            header.appendChild(name);
+            header.appendChild(controls);
+
+            div.appendChild(header);
+
+            return div;
+        }
+
+        // Update info panel
+        function updateInfoPanel() {
+            const visibleCount = Array.from(structures.values()).filter(s => s.visible).length;
+            const totalAtoms = Array.from(structures.values()).reduce((sum, s) => 
+                sum + (s.model ? s.model.atoms.length : 0), 0
+            );
+
+            document.getElementById('structureCount').textContent = 
+                `Structures: ${structures.size} loaded`;
+            document.getElementById('totalAtoms').textContent = 
+                `Total atoms: ${totalAtoms.toLocaleString()}`;
+            document.getElementById('visibleStructures').textContent = 
+                `Visible: ${visibleCount} structure${visibleCount !== 1 ? 's' : ''}`;
+
+            document.getElementById('infoPanel').style.display = 
+                structures.size > 0 ? 'block' : 'none';
+        }
+
+        // Event listeners
+        document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+
+        document.getElementById('resetView').addEventListener('click', () => {
+            if (viewer && structures.size > 0) {
+                viewer.zoomTo();
+                viewer.render();
+            }
+        });
+
+        document.getElementById('centerVisible').addEventListener('click', () => {
+            const visibleStructures = Array.from(structures.values()).filter(s => s.visible);
+            if (visibleStructures.length > 0 && viewer) {
+                const allAtoms = [];
+                visibleStructures.forEach(s => {
+                    if (s.model && s.model.atoms) {
+                        allAtoms.push({model: s.model});
+                    }
+                });
+                
+                if (allAtoms.length > 0) {
+                    viewer.zoomTo(allAtoms);
+                    viewer.render();
+                }
+            }
+        });
+
+        document.getElementById('hideAllStructures').addEventListener('click', () => {
+            structures.forEach(structure => {
+                structure.visible = false;
+                structure.updateDisplay();
+            });
+            updateStructureList();
+            updateInfoPanel();
+        });
+
+        document.getElementById('showAllStructures').addEventListener('click', () => {
+            structures.forEach(structure => {
+                structure.visible = true;
+                structure.updateDisplay();
+            });
+            updateStructureList();
+            updateInfoPanel();
+        });
+
+        // Initialize on load
+        window.addEventListener('load', async () => {
+            initViewer();
+            await loadAllStructures();
+        });
+    </script>
+</body>
+</html>

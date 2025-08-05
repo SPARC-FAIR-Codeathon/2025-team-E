@@ -156,11 +156,26 @@
     <div v-if="showPdbViewer" class="pdb-viewer-overlay" @click="closePdbViewer">
       <div class="pdb-viewer-content" @click.stop>
         <div class="pdb-viewer-header">
-          <h3>🧬 Molecular Structure Viewer</h3>
+          <div class="pdb-viewer-title">
+            <h3>{{ iframes[currentMolecule].emoji }} Molecular Structure Viewer -- {{ iframes[currentMolecule].name }}</h3>
+            <p class="molecule-description">{{ iframes[currentMolecule].description }}</p>
+          </div>
+          <div class="molecule-toggles">
+            <button 
+              v-for="(molecule, key) in iframes" 
+              :key="key"
+              @click="switchMolecule(key)"
+              :class="['molecule-toggle-btn', { active: currentMolecule === key }]"
+              :title="molecule.description"
+            >
+              <span class="molecule-emoji">{{ molecule.emoji }}</span>
+              <span class="molecule-name">{{ molecule.name }}</span>
+            </button>
+          </div>
           <button @click="closePdbViewer" class="close-button">✕</button>
         </div>
         <iframe 
-          src="/pdb_viewer.html"
+          :src="iframes[currentMolecule].src"
           class="pdb-viewer-iframe"
           frameborder="0"
           title="Molecular Structure Viewer"
@@ -264,6 +279,33 @@ export default {
       showLungInfo: false,
       showBrainInfo: false,
       fundingPopupVisible: false,
+      currentMolecule: 'estrogenReceptor', // Default to estrogen receptor
+      iframes: {
+        estrogenReceptor: {
+          src: '/molecular_viewer/estrogen_receptor/estrogen_receptor.html',
+          width: '100%',
+          height: '600px',
+          name: 'Estrogen Receptor',
+          emoji: '🔬',
+          description: 'Estrogen receptor interactions with BPA and estradiol'
+        },
+        ppar: {
+          src: '/molecular_viewer/ppar/ppar.html',
+          width: '100%',
+          height: '600px',
+          name: 'PPAR',
+          emoji: '⚡',
+          description: 'Peroxisome proliferator-activated receptor'
+        },
+        transthyretin: {
+          src: '/molecular_viewer/transthyretin/transthyretin.html',
+          width: '100%',
+          height: '600px',
+          name: 'Transthyretin',
+          emoji: '🧠',
+          description: 'Thyroid hormone transport protein'
+        }
+      },
       // Health percentages for each organ (constants for now)
       organHealthData: {
           'brain': { health: -1, x: 150, y: 80 },
@@ -606,6 +648,50 @@ export default {
     closePdbViewer: function() {
       this.showPdbViewer = false;
     },
+    switchMolecule: function(moleculeKey) {
+      // Switch to the selected molecule
+      this.currentMolecule = moleculeKey;
+      console.log(`Switched to molecule: ${this.iframes[moleculeKey].name}`);
+      
+      // Emit an event for analytics or other components
+      this.$emit('molecule-changed', {
+        molecule: moleculeKey,
+        name: this.iframes[moleculeKey].name,
+        timestamp: new Date().toISOString()
+      });
+    },
+    handleOpen3DViewer: function(payload) {
+      // Handle EventBus request to open 3D viewer
+
+      
+      const { moleculeKey, moleculeName, viewerData, interaction } = payload;
+      
+      // Validate the molecule key exists in our iframes
+      if (this.iframes[moleculeKey]) {
+        // Switch to the requested molecule
+        this.currentMolecule = moleculeKey;
+        
+        // Open the PDB viewer
+        this.showPdbViewer = true;
+        
+        
+        // Emit event for analytics
+        this.$emit('3d-viewer-opened', {
+          moleculeKey: moleculeKey,
+          moleculeName: moleculeName,
+          interaction: interaction,
+          timestamp: new Date().toISOString()
+        });
+      } else {
+        console.warn(`Molecule key '${moleculeKey}' not found in available iframes`);
+        
+        // Fallback to estrogen receptor and still open viewer
+        this.currentMolecule = 'estrogenReceptor';
+        this.showPdbViewer = true;
+        
+        console.log(`Fallback: Opened default molecule viewer`);
+      }
+    },
     closeToxinSidebar: function() {
       this.showToxinSidebar = false;
     },
@@ -925,11 +1011,15 @@ export default {
     
     // Listen for toxin sidebar open event
     EventBus.on("openToxinSidebar", this.toggleToxinSidebar);
+    
+    // Listen for 3D viewer open event
+    EventBus.on("open3DViewer", this.handleOpen3DViewer);
   },
   unmounted: function () {
     // Clean up EventBus listeners
     EventBus.off("openChatbot", this.openChatbot);
     EventBus.off("openToxinSidebar", this.toggleToxinSidebar);
+    EventBus.off("open3DViewer", this.handleOpen3DViewer);
   },
 };
 </script>
@@ -1212,31 +1302,101 @@ export default {
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  gap: 20px;
 }
 
-.pdb-viewer-header h3 {
-  margin: 0;
+.pdb-viewer-title {
+  flex: 1;
+}
+
+.pdb-viewer-title h3 {
+  margin: 0 0 5px 0;
   font-size: 18px;
 }
 
-.pdb-viewer-close {
-  background: none;
-  border: none;
+.molecule-description {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.molecule-toggles {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.molecule-toggle-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   color: white;
-  font-size: 24px;
+  padding: 8px 12px;
+  border-radius: 20px;
   cursor: pointer;
-  padding: 0;
-  width: 30px;
-  height: 30px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.molecule-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.molecule-toggle-btn.active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #7b2cbf;
+  border-color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.molecule-toggle-btn.active:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
+.molecule-emoji {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.molecule-name {
+  font-size: 11px;
+  font-weight: inherit;
+}
+
+.close-button {
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
 }
 
-.pdb-viewer-close:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
 }
 
 .pdb-viewer-iframe {
@@ -1295,6 +1455,72 @@ export default {
   
   .select-label {
     font-size: 13px;
+  }
+  
+  // Molecular viewer responsive adjustments
+  .pdb-viewer-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    padding: 12px 16px;
+  }
+  
+  .pdb-viewer-title {
+    text-align: center;
+    
+    h3 {
+      font-size: 16px;
+    }
+    
+    .molecule-description {
+      font-size: 12px;
+    }
+  }
+  
+  .molecule-toggles {
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  .molecule-toggle-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    
+    .molecule-emoji {
+      font-size: 14px;
+    }
+    
+    .molecule-name {
+      font-size: 10px;
+    }
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+}
+
+// Additional mobile adjustments for very small screens
+@media (max-width: 768px) {
+  .pdb-viewer-content {
+    width: 98vw;
+    height: 98vh;
+  }
+  
+  .molecule-toggles {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .molecule-toggle-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
   }
 }
 

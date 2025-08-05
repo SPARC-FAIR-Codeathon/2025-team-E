@@ -205,6 +205,15 @@
       <div class="popup-footer">
         <el-button @click="handleClose">Close</el-button>
         <el-button 
+          v-if="interaction['3d-viewer']"
+          type="success" 
+          :icon="View"
+          @click="handleView3DStructure"
+          class="view-3d-btn"
+        >
+          🧬 View 3D Structure
+        </el-button>
+        <el-button 
           v-if="interaction.references && interaction.references.length > 0"
           type="primary" 
           :icon="Link"
@@ -220,9 +229,10 @@
 <script>
 import { computed } from 'vue'
 import { ElDialog, ElButton, ElTag, ElIcon } from 'element-plus'
+import EventBus from '../EventBus'
 import { 
   Document, Connection, Location, Tools, Share, Warning, Reading, 
-  Collection, InfoFilled, Link, WarningFilled, Right
+  Collection, InfoFilled, Link, WarningFilled, Right, View
 } from '@element-plus/icons-vue'
 
 export default {
@@ -243,7 +253,8 @@ export default {
     InfoFilled,
     Link,
     WarningFilled,
-    Right
+    Right,
+    View
   },
   props: {
     modelValue: {
@@ -290,6 +301,31 @@ export default {
     const openDOI = (doi) => {
       const doiUrl = `https://doi.org/${doi}`
       emit('open-research', doiUrl)
+    }
+
+    const handleView3DStructure = () => {
+      // Map target proteins to molecule keys for MultiFlatmap
+      const proteinToMoleculeMap = {
+        'Estrogen Receptor': 'estrogenReceptor',
+        'Transthyretin (TTR)': 'transthyretin',
+        'Transthyretin': 'transthyretin',
+        'Androgen Receptor (AR)': 'ppar', // Using PPAR as placeholder for AR
+        'Androgen Receptor': 'ppar',
+        'PPAR': 'ppar'
+      }
+
+      const moleculeKey = proteinToMoleculeMap[props.interaction.targetProtein] || 'estrogenReceptor'
+      
+      // Emit EventBus event to MultiFlatmap
+      EventBus.emit('open3DViewer', {
+        moleculeKey: moleculeKey,
+        moleculeName: props.interaction.targetProtein,
+        viewerData: props.interaction['3d-viewer'],
+        interaction: props.interaction
+      })
+
+      // Close the popup after opening 3D viewer
+      visible.value = false
     }
 
     const getEvidenceType = (level) => {
@@ -363,6 +399,7 @@ export default {
       handleClose,
       openResearch,
       openDOI,
+      handleView3DStructure,
       getEvidenceType,
       getEvidenceDescription,
       getNerveLocationDescription,
@@ -773,6 +810,19 @@ export default {
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
+
+    .view-3d-btn {
+      background: linear-gradient(135deg, #8E4EC6, #9d4edd);
+      border-color: #7b2cbf;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #7b2cbf, #8E4EC6);
+        border-color: #6f2899;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
+      }
+    }
   }
 }
 

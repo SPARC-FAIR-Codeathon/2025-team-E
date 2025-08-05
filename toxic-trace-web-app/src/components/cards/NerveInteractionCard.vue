@@ -83,6 +83,15 @@
       >
         Research
       </el-button>
+      <el-button 
+        v-if="interaction['3d-viewer']"
+        type="success" 
+        size="small"
+        @click.stop="handleView3DStructure"
+        class="view-3d-btn"
+      >
+        🧬 View 3D
+      </el-button>
     </div>
 
     <!-- Detail Popup -->
@@ -97,6 +106,7 @@
 <script>
 import { ref } from 'vue'
 import { ElButton, ElTag } from 'element-plus'
+import EventBus from '../EventBus'
 import NerveInteractionDetailPopup from '../popups/NerveInteractionDetailPopup.vue'
 
 export default {
@@ -116,12 +126,41 @@ export default {
       default: false
     }
   },
-  emits: ['select', 'view-details', 'open-research'],
+  emits: ['select', 'view-details', 'open-research', 'view-3d-structure'],
   setup(props, { emit }) {
     const showDetailPopup = ref(false)
 
     const handleOpenResearch = (url) => {
       emit('open-research', url)
+    }
+
+    const handleView3DStructure = () => {
+      // Map target proteins to molecule keys for MultiFlatmap
+      const proteinToMoleculeMap = {
+        'Estrogen Receptor': 'estrogenReceptor',
+        'Transthyretin (TTR)': 'transthyretin',
+        'Transthyretin': 'transthyretin',
+        'Androgen Receptor (AR)': 'ppar', // Using PPAR as placeholder for AR
+        'Androgen Receptor': 'ppar',
+        'PPAR': 'ppar'
+      }
+
+      const moleculeKey = proteinToMoleculeMap[props.interaction.targetProtein] || 'estrogenReceptor'
+      
+      // Emit EventBus event to MultiFlatmap
+      EventBus.emit('open3DViewer', {
+        moleculeKey: moleculeKey,
+        moleculeName: props.interaction.targetProtein,
+        viewerData: props.interaction['3d-viewer'],
+        interaction: props.interaction
+      })
+
+      // Also emit local event for parent components
+      emit('view-3d-structure', {
+        moleculeKey: moleculeKey,
+        moleculeName: props.interaction.targetProtein,
+        viewerData: props.interaction['3d-viewer']
+      })
     }
 
     const getEvidenceType = (level) => {
@@ -136,6 +175,7 @@ export default {
     return {
       showDetailPopup,
       handleOpenResearch,
+      handleView3DStructure,
       getEvidenceType
     }
   }
@@ -253,6 +293,21 @@ export default {
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid #ebeef5;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .view-3d-btn {
+      background: linear-gradient(135deg, #8E4EC6, #9d4edd);
+      border-color: #7b2cbf;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #7b2cbf, #8E4EC6);
+        border-color: #6f2899;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
+      }
+    }
   }
 }
 </style>
