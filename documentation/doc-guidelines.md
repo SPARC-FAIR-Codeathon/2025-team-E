@@ -35,7 +35,9 @@ Create two documents in your editor of choice, but the editor needs to be good a
 
   
 
-One will be the website documentation, the other will be a "Website review and bug report" for me
+One will be the website documentation, the other will be a "Website review and bug report" for me.
+
+I really like markdown, so would just do it here in github, but the choice is yours :)
 
   
 
