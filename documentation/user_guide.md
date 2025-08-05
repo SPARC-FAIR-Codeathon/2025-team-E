@@ -101,6 +101,7 @@ Quick summaries of toxins, their biological targets, and exposure sources.
 - Filter toxins by **system category** (e.g. Nervous, Digestive).
 
 ![Toxin-sidebar](sidebar.png)
+![Filter-Toxins](filter.png)
 
 ---
 
