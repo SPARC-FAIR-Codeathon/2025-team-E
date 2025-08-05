@@ -1,6 +1,6 @@
 # 2025-team-E
 
-[# Toxic Trace](https://team-e-toxic-trace-50672fa229b6.herokuapp.com/)
+# [Toxic Trace](https://team-e-toxic-trace-50672fa229b6.herokuapp.com/)
 
 <img width="3577" height="1886" alt="image" src="https://github.com/user-attachments/assets/60b42fc8-152c-4e76-8e21-11d3c42082a2" />
 
@@ -160,5 +160,7 @@ const PDB_FILES = [
 </div>
 ```
 
+## *Disclaimer*
 
+A few of the links in our database are going to the wrong papers unfortunately, so if the paper you end up in looks wrong, it probably is
 # FundLab
