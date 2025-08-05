@@ -1,22 +1,19 @@
 <template>
   <div class="health-quiz-container">
-    <el-card class="quiz-card">
-      <template #header>
-        <div class="quiz-header">
-          <h3>Health Assessment Quiz</h3>
-          <p>Answer these questions to see how your lifestyle affects your organ health</p>
-          <div v-if="hasSavedData" class="saved-data-indicator">
-            💾 You have saved health data that will be applied to the body map
-          </div>
-        </div>
-      </template>
+    <div class="quiz-header">
+      <h3>Health Assessment Quiz</h3>
+      <p>Answer these questions to see how your lifestyle affects your organ health</p>
+      <div v-if="hasSavedData" class="saved-data-indicator">
+        💾 You have saved health data that will be applied to the body map
+      </div>
+    </div>
 
-      <div v-if="!quizCompleted" class="quiz-content">
+    <div v-if="!quizCompleted" class="quiz-content">
         <div class="question-progress">
           <el-progress 
             :percentage="progressPercentage" 
             :stroke-width="6"
-            color="#409eff"
+            color="#8E4EC6"
           />
           <span class="progress-text">Question {{ currentQuestionIndex + 1 }} of {{ questions.length }}</span>
         </div>
@@ -78,6 +75,7 @@
             @click="nextQuestion"
             type="primary"
             :disabled="currentAnswer === null"
+            class="purple-button"
           >
             Next →
           </el-button>
@@ -87,6 +85,7 @@
             @click="completeQuiz"
             type="success"
             :disabled="currentAnswer === null"
+            class="purple-button"
           >
             ✓ Complete Quiz
           </el-button>
@@ -121,12 +120,11 @@
 
         <div class="quiz-actions">
           <el-button @click="resetQuiz">🔄 Retake Quiz</el-button>
-          <el-button @click="applyHealthData" type="primary">
+          <el-button @click="applyHealthData" type="primary" class="purple-button">
             📤 Apply to Body Map
           </el-button>
         </div>
       </div>
-    </el-card>
   </div>
 </template>
 
@@ -467,10 +465,10 @@ export default {
   .saved-data-indicator {
     margin-top: 12px;
     padding: 8px 12px;
-    background-color: #e8f5e8;
-    border: 1px solid #4caf50;
+    background-color: rgba(142, 78, 198, 0.1);
+    border: 1px solid #8E4EC6;
     border-radius: 4px;
-    color: #2e7d32;
+    color: #7b2cbf;
     font-size: 13px;
     font-weight: 500;
   }
@@ -533,7 +531,7 @@ export default {
     
     .success-icon {
       font-size: 48px;
-      color: #22c55e;
+      color: #8E4EC6;
       margin-bottom: 16px;
       font-weight: bold;
     }
@@ -585,6 +583,29 @@ export default {
     display: flex;
     justify-content: center;
     gap: 12px;
+  }
+}
+
+// Element Plus overrides for purple theme
+:deep(.purple-button) {
+  &.el-button--primary {
+    background: linear-gradient(135deg, #8E4EC6, #9d4edd) !important;
+    border-color: #8E4EC6 !important;
+    
+    &:hover {
+      background: linear-gradient(135deg, #7b2cbf, #8E4EC6) !important;
+      border-color: #7b2cbf !important;
+    }
+  }
+  
+  &.el-button--success {
+    background: linear-gradient(135deg, #8E4EC6, #9d4edd) !important;
+    border-color: #8E4EC6 !important;
+    
+    &:hover {
+      background: linear-gradient(135deg, #7b2cbf, #8E4EC6) !important;
+      border-color: #7b2cbf !important;
+    }
   }
 }
 

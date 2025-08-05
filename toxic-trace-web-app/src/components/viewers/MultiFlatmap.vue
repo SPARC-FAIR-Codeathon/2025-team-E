@@ -1299,7 +1299,7 @@ export default {
 }
 
 // Body System Select Purple Theme
-::v-deep .body-system-select {
+:deep(.body-system-select) {
   .el-input__wrapper {
     transition: all 0.3s ease;
     
