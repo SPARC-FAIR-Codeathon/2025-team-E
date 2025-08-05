@@ -11,6 +11,7 @@
         placeholder="Body System" 
         @change="onMapSelectionChange"
         style="width: 140px"
+        class="body-system-select"
       >
         <el-option
           v-for="option in mapOptions"
@@ -1297,6 +1298,87 @@ export default {
   }
 }
 
+// Body System Select Purple Theme
+::v-deep .body-system-select {
+  .el-input__wrapper {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      box-shadow: 0 0 0 1px #8E4EC6 !important;
+    }
+    
+    &.is-focus {
+      box-shadow: 0 0 0 1px #8E4EC6 !important;
+    }
+  }
+  
+  .el-input__inner {
+    &:focus {
+      border-color: #8E4EC6 !important;
+    }
+  }
+}
+
+</style>
+
+<!-- Global styles for Element Plus dropdown (unscoped) -->
+<style lang="scss">
+// Element Plus Select Dropdown Purple Theme - Global styles
+.el-select-dropdown {
+  .el-select-dropdown__item {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: rgba(142, 78, 198, 0.1) !important;
+      color: #8E4EC6 !important;
+      font-weight: 600 !important;
+    }
+    
+    &.selected {
+      background-color: transparent !important;
+      color: #8E4EC6 !important;
+      font-weight: 700 !important;
+    }
+    
+    &.is-selected {
+      background-color: transparent !important;
+      color: #8E4EC6 !important;
+      font-weight: 700 !important;
+    }
+    
+    &.selected:hover,
+    &.is-selected:hover {
+      background-color: rgba(142, 78, 198, 0.1) !important;
+      color: #7b2cbf !important;
+      font-weight: 700 !important;
+    }
+  }
+}
+
+// Alternative class names that Element Plus might use
+.el-popper {
+  .el-select-dropdown__item {
+    &:hover {
+      background-color: rgba(142, 78, 198, 0.1) !important;
+      color: #8E4EC6 !important;
+      font-weight: 600 !important;
+    }
+    
+    &.selected,
+    &.is-selected {
+      background-color: transparent !important;
+      color: #8E4EC6 !important;
+      font-weight: 700 !important;
+    }
+    
+    &.selected:hover,
+    &.is-selected:hover {
+      background-color: rgba(142, 78, 198, 0.1) !important;
+      color: #7b2cbf !important;
+      font-weight: 700 !important;
+    }
+  }
+}
 </style>
 
 <style src="../../assets/mapicon-species-style.css"></style>
